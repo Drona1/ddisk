@@ -21,7 +21,6 @@ public class DiskUser {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
     private String pass;
 
     @Column(nullable = false)
@@ -35,6 +34,9 @@ public class DiskUser {
     @JoinColumn(name = "main_folder_id")
     private DiskFolder mainFolder;
 
+    @OneToOne
+    @JoinColumn(name = "bin_id")
+    private DiskBin bin;
     public DiskUser(String email, String pass, UserRole role) {
         this.email = email;
         this.pass = pass;

@@ -22,9 +22,19 @@ public class UserObjectPermission {
     private DiskObject diskObject;
 
     @Enumerated(EnumType.STRING)
-    private AccessRights permission;
+    private AccessRights accessRights;
 
     public UserObjectPermission(AccessRights permission) {
-        this.permission = permission;
+        this.accessRights = permission;
+    }
+
+    @Override
+    public String toString() {
+        return "UserObjectPermission{" +
+                "id=" + id +
+                ", user=" + user.getId() +
+                ", diskObject=" + diskObject.getId() +
+                ", permission=" + accessRights +
+                '}';
     }
 }

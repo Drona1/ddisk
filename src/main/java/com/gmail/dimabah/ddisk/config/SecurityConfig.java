@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests( authConfig->{
                     authConfig.requestMatchers("/register").permitAll();
                     authConfig.requestMatchers(HttpMethod.POST,"/newuser").permitAll();
-                    authConfig.requestMatchers("/folders/**").permitAll();
+                    authConfig.requestMatchers("/folders/**","/js/**").permitAll();
                     authConfig.anyRequest().authenticated();
                 })
                 .exceptionHandling()

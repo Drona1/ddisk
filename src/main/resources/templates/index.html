@@ -3,12 +3,12 @@
     <meta charset="UTF-8">
     <title>dimabah.gmail.com</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="styles.css"> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
 
 </head>
 <body data-bs-theme="dark">
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+<svg class="d-none" xmlns="http://www.w3.org/2000/svg" >
     <symbol id="ddisk"  fill="currentColor" viewBox="0 0 16 16">
         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
         <path d="M12.331 9.5a1 1 0 0 1 0 1A4.998 4.998 0 0 1 8 13a4.998 4.998 0 0 1-4.33-2.5A1 1 0 0 1 4.535 9h6.93a1 1 0 0 1 .866.5zM7 6.5c0 .828-.448 0-1 0s-1 .828-1 0S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 0-1 0s-1 .828-1 0S9.448 5 10 5s1 .672 1 1.5z"/>
@@ -46,20 +46,93 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="renameModal" tabindex="-1" aria-labelledby="renameModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="renameModallLabel">Rename</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form role="form" class="form-horizontal" action="/rename" method="post">
+                <div class="modal-body">
+                    <input class="form-control text-bg-dark" type="text" id="newName" name = "newName" value="Untitled folder" required="true" minlength="1">
+                    <input type="hidden" id="renameAddress" name = "address">
+                    <input type="hidden" name = "currentFolder" th:value="${folder.getAddress()}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Rename</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="shareModallLabel">Share</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form role="form" class="form-horizontal" action="/share" method="post">
+                <div class="modal-body d-flex">
+                    <div class="form-floating col-md-10">
+                        <input class="form-control text-bg-dark" type="email" id="shareEmail" name = "email" placeholder="email" required="true" minlength="1">
+                        <label for="shareEmail">Add user email</label>
+                    </div>
+                    <div class="dropdown col align-self-center">
+                        <button class="btn btn-secondary dropdown-toggle"  type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Editor
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu ">
+                            <li><a class="dropdown-item" type="button">Editor</a></li>
+                            <li><a class="dropdown-item" type="button">Viewer</a></li>
+                            </ul>
+                    </div>
+                    <!-- <div class="form-floating">
+                        <input type="password" class="form-control text-bg-dark" id="password" name="pass"
+                               placeholder="Password" required minlength="8">
+                        <label for="password">Password</label>
+                    </div> -->
+
+
+                    <!-- <input type="email" class="form-control text-bg-dark" id="email" name="email"
+                    placeholder="Email" minlength="2" required> -->
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Rename</button>
+                    <input type="hidden" name = "currentFolder" th:value="${folder.getAddress()}">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="dropdown">
+    <ul class="dropdown-menu dropdown-menu" id="tableMenu">
+        <li id="share"><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#shareModal">Share</a></li>
+        <li id="rename"><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#renameModal">Rename</a></li>
+        <hr class="dropdown-divider">
+        <li><a class="dropdown-item" type="button" id="downloadButton">Download</a></li>
+        <hr class="dropdown-divider">
+        <li><a class="dropdown-item" type="button" id="removeButton">Remove</a></li>
+    </ul>
+</div>
 
 <main class="d-flex flex-nowrap">
-    <div class="d-flex flex-column flex-shrink-0 p-3 col-md-3" style="width: 280px; height: 100vh;">
+    <div class="flex-column flex-shrink-0 p-3 col-md-2"  >
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
             <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#ddisk"/></svg>
             <span class="fs-4">DDisk</span>
         </a>
         <hr>
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle" id="" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#new"/></svg>
                 New
             </button>
-            <ul class="dropdown-menu dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu" id="pageMenu">
                 <li>
                     <a type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#newFolderModal">New folder</a>
                 <li>
@@ -78,7 +151,7 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link text-white text-decoration-none">
+                <a href="/bin" class="nav-link text-white text-decoration-none">
                     <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#bin"/></svg>
                     Bin
                 </a>
@@ -87,20 +160,15 @@
         <hr>
         <div class="dropdown">
             <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-                <strong>mdo</strong>
+                <strong th:text="${email}"></strong>
             </a>
             <ul class="dropdown-menu dropdown-menu text-small shadow">
-                <li><a class="dropdown-item" href="#">New project...</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><a class="dropdown-item" href="#">Profile</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Sign out</a></li>
+                <li><a class="dropdown-item" href="/logout">Sign out</a></li>
             </ul>
         </div>
     </div>
 
-    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <svg class="d-none" xmlns="http://www.w3.org/2000/svg">
         <symbol id="iFolder"  fill="currentColor" viewBox="0 0 16 16">
             <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"/>
         </symbol>
@@ -109,7 +177,7 @@
             <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
         </symbol>
     </svg>
-    <div class="d-flex flex-column flex-shrink-0 p-3 col-md-10 " style="height: 100vh;" draggable="true" id="dragItem">
+    <div class="d-flex flex-column flex-shrink-0 p-3 col-md-10 vh-100" style="-webkit-user-drag: none;" draggable="true" id="dragItem"  >
         <input class="form-control text-bg-dark w-100 rounded-0 border-0" type="text" placeholder="Search in Ddisk" aria-label="Search">
         <table class="table table-dark table-hover">
             <thead>
@@ -120,7 +188,7 @@
                 </td>
                 <th scope="col">Name</th>
                 <th scope="col">Owner</th>
-                <th scope="col">Create date</th>
+                <th scope="col">Creation date</th>
                 <th scope="col">File size</th>
                 <td></td>
             </tr>
@@ -128,91 +196,226 @@
             <tbody>
             <tr th:each="internalFolder: ${folder.getFolders()}"
                 th:ondblclick="moveToFolder([[${internalFolder.address}]])"
-                onclick="selectRow(this)">
+                onclick="selectRow(this, false)"
+                oncontextmenu="selectRow(this, true)">
 
                 <td onclick="event.stopPropagation()">
                     <input class="form-check-input mt-0" type="checkbox" name="selectedObjects[]"
-                            th:id="${internalFolder.address}"/>
+                           th:value="${internalFolder.address}"/>
                 </td>
-                <td>
+                <td class="col-md-6">
                     <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#iFolder"/></svg>
                     <label th:text="${internalFolder.getName()}"/>
                 </td>
-                <td th:text="${internalFolder.getOwner()}"/>
-                <td th:text="${#dates.format(internalFolder.getCreateDate(),'yyyy-MM-dd')}"/>
+                <td class="col-md-3"th:text="${internalFolder.getOwner()}"/>
+                <td th:text="${#dates.format(internalFolder.getCreateDate(),'dd-MM-yyyy (HH:mm:ss)')}"/>
                 <td></td>
-                <td>Folder</td>
+                <td>
+                    <button class="btn btn-secondary"  type="button" onclick="showTableMenu()">
+                        ...
+                    </button>
+                </td>
 
             </tr>
             <tr th:each="internalFile: ${folder.getFiles()}"
-                onclick="selectRow(this)">
+                onclick="selectRow(this, false)"
+                oncontextmenu="selectRow(this, true)">
                 <td onclick="event.stopPropagation()">
                     <input class="form-check-input mt-0" type="checkbox" name="selectedObjects[]"
-                            th:id="checkbox+${internalFile.address}"/>
+                           th:value="${internalFile.address}"/>
                 </td>
-                <td>
+                <td class="col-md-6">
                     <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#iFile"/></svg>
                     <label th:text="${internalFile.getName()}"/>
                 </td>
-                <td th:text="${internalFile.getOwner()}"/>
-                <td th:text="${#dates.format(internalFile.getCreateDate(),'yyyy-MM-dd')}"/>
+                <td class="col-md-3" th:text="${internalFile.getOwner()}"/>
+                <td th:text="${#dates.format(internalFile.getCreateDate(),'dd-MM-yyyy (HH:mm:ss)')}"/>
                 <td th:text="${internalFile.getSize()}"/>
-                <td>File</td>
+                <td>
+
+                    <button class="btn btn-secondary"  type="button" onclick="showTableMenu()">
+                        ...
+                    </button>
+
+
+                </td>
             </tr>
             </tbody>
         </table>
     </div>
 
 </main>
+<!--<script src="../static/js/remove.js"></script>-->
+<script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script>
+    $('#removeButton').click(function () {
+        var addressList = {'selectedObjects[]': []};
 
+        $(":checked").each(function () {
+            if ($(this).val() != "on") {
+                addressList['selectedObjects[]'].push($(this).val());
+            }
+        });
+        $.post("/remove", addressList, function (data, status) {
+            window.location.reload();
+        });
+    });
+</script>
+<script>
+    $('#downloadButton').click(function () {
+        var addressList = {'selectedObjects[]': []};
+
+        $(":checked").each(function () {
+            if ($(this).val() != "on") {
+                addressList['selectedObjects[]'].push($(this).val());
+            }
+        });
+        // $.get("/download", addressList, function (data, status) {
+        //     var downloadLink = document.createElement('a');
+        //     downloadLink.href = window.URL.createObjectURL(data);
+        //     downloadLink.download = 'files.zip';
+        //
+        //     // Добавляем ссылку на страницу и кликаем по ней, чтобы скачать архив
+        //     document.body.appendChild(downloadLink);
+        //     downloadLink.click();
+        //     document.body.removeChild(downloadLink);
+        // });
+        $.ajax({
+            url: "/download",
+            type: "POST",
+            data: addressList,
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data, status, xhr) {
+                if (xhr.status == 200) {
+                        var downloadLink = document.createElement('a');
+                        downloadLink.href = window.URL.createObjectURL(data);
+                        downloadLink.download = 'files.zip';
+
+                        // Добавляем ссылку на страницу и кликаем по ней, чтобы скачать архив
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                } else {
+                    // Обработка других кодов
+                }
+            },
+            error: function (xhr, status, error) {
+                // Обработка ошибок
+            }
+        });
+
+    });
+
+</script>
+<script>
+    $('#rename').click(function () {
+        const checkboxes = document.querySelectorAll('input[type=checkbox]');
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked){
+                const currentAddress =  checkboxes[i].value;
+                const currentName = checkboxes[i].closest('tr').querySelectorAll('td')[1].textContent.trim();
+                var renameAddress = document.querySelector('#renameAddress');
+                renameAddress.value = currentAddress;
+                var newName = document.querySelector('#newName');
+                newName.value = currentName;
+                break;
+            }
+        }
+    });
+</script>
 
 <script>
     const fileUpload = document.getElementById("fileUpload");
     fileUpload.addEventListener("click", function(event) {
-        event.preventDefault(); // Отменяем стандартное действие ссылки
+        event.preventDefault();
         let fileInput = document.createElement("input");
         fileInput.type = "file";
+        fileInput.multiple = true;
         fileInput.addEventListener("change", function() {
-            uploadFile(this.files[0]); // Отправляем выбранный файл на сервер
+            uploadFiles(this.files);
         });
-        fileInput.click(); // Вызываем окно выбора файла
+        fileInput.click();
     });
+
     const folderUpload = document.getElementById("folderUpload");
-    folderUpload.addEventListener("click", async function() {
-        const directoryHandle = await window.showDirectoryPicker();
-        uploadFolder(directoryHandle);
+    folderUpload.addEventListener("click", function(event) {
+        event.preventDefault();
+        let fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.webkitdirectory = true;
+        fileInput.addEventListener("change", function() {
+            uploadFolder(this.files);
+        });
+        fileInput.click();
     });
+    ;
 
-    async function uploadFolder(directoryHandle) {
-        // Обработка файлов в выбранной папке и отправка на сервер
-    }
-
-    function uploadFile(file) {
+    async function uploadFolder(files) {
         const xhr = new XMLHttpRequest();
         const formData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            formData.append("files", files[i]);
+            formData.append("webkitRelativePaths", files[i].webkitRelativePath.replace(/\\/g, "/"));
+        }
         let currentFolder = document.getElementById("currentFolder").value;
-        formData.append("files", file);
         formData.append("currentFolder",currentFolder);
         xhr.open("POST", "/upload");
         xhr.onload = function() {
             if (xhr.status === 200) {
-                console.log("Файл успешно загружен на сервер");
+                console.log("Folders uploaded successfully");
+                location.reload();
             } else {
-                console.error("Ошибка при загрузке файла на сервер");
+                console.error("Forders upload error");
             }
         };
         xhr.send(formData);
     }
+
+    function uploadFiles(files) {
+        const xhr = new XMLHttpRequest();
+        const formData = new FormData();
+        let currentFolder = document.getElementById("currentFolder").value;
+        for (var i = 0; i < files.length; i++) {
+            formData.append("files", files[i]);
+        }
+        formData.append("currentFolder",currentFolder);
+        xhr.open("POST", "/upload");
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                console.log("Files uploaded successfully");
+                location.reload();
+            } else {
+                console.error("Files upload error");
+            }
+        };
+        xhr.send(formData);
+    }
+
     function moveToFolder(address) {
         location.href = '/folders/'+address;
     }
-    function selectRow(row) {
 
+    const checkboxElements = document.querySelectorAll('table input[type="checkbox"]');
+
+
+    function selectRow(row, contextmenuFlag) {
+        // console.log(row.querySelectorAll('td')[1].textContent.trim());
+
+        const renameLi = document.getElementById("rename");
+        renameLi.style.display = "block";
         let checkboxes = document.querySelectorAll('input[type=checkbox]');
-        for (let i = 0; i < checkboxes.length; i++) {
-            checkboxes[i].checked = false;
-        }
         let checkbox = row.querySelector('input[type=checkbox]');
+        if (contextmenuFlag===false || checkbox.checked === false){
+            for (let i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = false;
+            }
+        }
+        if ($("input:checked").length>1){
+            renameLi.style.display = "none";
+        }
         checkbox.checked = true;
     }
     function toggleAllCheckboxes(toggle) {
@@ -224,62 +427,150 @@
     }
 
 </script>
-
 <script>
-    var dragItem = document.getElementById("dragItem");
-
-    dragItem.addEventListener("dragstart", dragStart);
-    dragItem.addEventListener("dragover", dragOver);
-    dragItem.addEventListener("dragenter", dragEnter);
-    dragItem.addEventListener("dragleave", dragLeave);
-    dragItem.addEventListener("drop", drop);
-    dragItem.addEventListener("dragend", dragEnd);
-
-    function dragStart(e) {
-        e.dataTransfer.setData("text/plain", ""); // Необходимо для Firefox
-    }
-
-    function dragOver(e) {
-        e.preventDefault();
-        dragItem.classList.add("dragging");
-    }
-
-    function dragEnter(e) {
-        e.preventDefault();
-        dragItem.classList.add("dragging");
-    }
-
-    function dragLeave(e) {
-        dragItem.classList.remove("dragging");
-    }
-
-    function drop(e) {
-        e.preventDefault();
-        dragItem.classList.remove("dragging");
-
-        // Получаем список файлов
-        var files = e.dataTransfer.files;
-
-        // Отправляем файлы на сервер
-        sendFiles(files);
-    }
-
-    function dragEnd(e) {
-        dragItem.classList.remove("dragging");
-    }
-
-    function sendFiles(files) {
-        // Отправляем файлы на сервер, например, через AJAX
-        var formData = new FormData();
-        let currentFolder = document.getElementById("currentFolder").value;
-        for (var i = 0; i < files.length; i++) {
-            formData.append("files", files[i]);
+    async function getAllFileEntries(dataTransferItemList) {
+        let fileEntries = [];
+        let queue = [];
+        for (let i = 0; i < dataTransferItemList.length; i++) {
+            queue.push(dataTransferItemList[i].webkitGetAsEntry());
         }
+        while (queue.length > 0) {
+            let entry = queue.shift();
+            if (entry.isFile) {
+                fileEntries.push(entry);
+            } else if (entry.isDirectory) {
+                let reader = entry.createReader();
+                queue.push(...await readAllDirectoryEntries(reader));
+            }
+        }
+        return fileEntries;
+    }
+
+    async function readAllDirectoryEntries(directoryReader) {
+        let entries = [];
+        let readEntries = await readEntriesPromise(directoryReader);
+        while (readEntries.length > 0) {
+            entries.push(...readEntries);
+            readEntries = await readEntriesPromise(directoryReader);
+        }
+        return entries;
+    }
+
+    async function readEntriesPromise(directoryReader) {
+        try {
+            return await new Promise((resolve, reject) => {
+                directoryReader.readEntries(resolve, reject);
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    var elDrop = document.getElementById('dragItem');
+
+
+    elDrop.addEventListener('dragover', function (event) {
+        event.preventDefault();
+    });
+
+    elDrop.addEventListener('drop', async function (event) {
+        event.preventDefault();
+        let items = await getAllFileEntries(event.dataTransfer.items);
+        await uploadDroppedDir(items);
+    });
+    async function uploadDroppedDir(files){
+        const xhr = new XMLHttpRequest();
+        const formData = new FormData();
+        let currentFolder = document.getElementById("currentFolder").value;
         formData.append("currentFolder",currentFolder);
-        var xhr = new XMLHttpRequest();
+        for (var i = 0; i < files.length; i++) {
+            const file = await getFileFromEntry(files[i]);
+            formData.append("files", file);
+            formData.append("webkitRelativePaths", files[i].fullPath.substring(1).replace(/\\/g, "/"));
+        }
         xhr.open("POST", "/upload");
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                console.log("Files uploaded successfully");
+                location.reload();
+            } else {
+                console.error("Files upload error");
+            }
+        };
         xhr.send(formData);
     }
+    function getFileFromEntry(fileEntry) {
+        return new Promise((resolve, reject) => {
+            fileEntry.file(file => {
+                resolve(file);
+            }, error => {
+                reject(error);
+            });
+        });
+    }
+</script>
+
+
+<script>
+    var pageMenu = document.querySelector("#pageMenu");
+    var tableMenu = document.querySelector("#tableMenu");
+    var menuVisible = false;
+
+    function showPageMenu() {
+        tableMenu.style.display = "none";
+        pageMenu.style.display = "block";
+
+        if (event.clientX > screen.width-180){
+            pageMenu.style.left = screen.width-180 + "px";
+        }else {
+            pageMenu.style.left = event.clientX-10 + "px";
+        }
+        if (event.clientY > screen.height-260){
+            pageMenu.style.top = screen.height-350 + "px";
+        }else {
+            pageMenu.style.top = event.clientY-90+ "px";
+        }
+        menuVisible = true;
+    }
+    function showTableMenu() {
+        pageMenu.style.display = "none";
+        tableMenu.style.display = "block";
+        tableMenu.style.position = "absolute";
+        if (event.clientX > screen.width-180){
+            tableMenu.style.left = screen.width-180 + "px";
+        }else {
+            tableMenu.style.left = event.clientX + "px";
+        }
+        if (event.clientY > screen.height-260){
+            tableMenu.style.top = screen.height-350 + "px";
+        }else {
+            tableMenu.style.top = event.clientY + "px";
+        }
+        menuVisible = true;
+    }
+
+    document.addEventListener("contextmenu", function(event) {
+        event.preventDefault();
+        var target = event.target;
+        var emptySpace = document.querySelector("#dragItem");
+
+        if (target.tagName === "TD") {
+            showTableMenu();
+        } else if(target===emptySpace){
+            showPageMenu();
+        }
+    });
+
+    document.addEventListener("click", function(event) {
+
+        if (menuVisible && event.target.tagName!=="BUTTON") {
+            pageMenu.style.display = "none";
+            pageMenu.style.display = "";
+            tableMenu.style.display = "none";
+            tableMenu.style.display = "";
+            menuVisible = false;
+        }
+    });
 </script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 package com.gmail.dimabah.ddisk.services;
 
+import com.gmail.dimabah.ddisk.models.DiskBin;
 import com.gmail.dimabah.ddisk.models.DiskFolder;
 import com.gmail.dimabah.ddisk.models.DiskUser;
 import com.gmail.dimabah.ddisk.models.UserObjectPermission;
@@ -13,18 +14,17 @@ import org.springframework.stereotype.Service;
 public class DiskUserService {
     private final DiskUserRepository userRepository;
     private final DiskFolderService diskFolderService;
+    private final DiskBinService binService;
 
-    public DiskUserService(DiskUserRepository userRepository, DiskFolderService diskFolderService) {
+    public DiskUserService(DiskUserRepository userRepository, DiskFolderService diskFolderService, DiskBinService binService) {
         this.userRepository = userRepository;
         this.diskFolderService = diskFolderService;
+        this.binService = binService;
     }
 
+    @Transactional
     public DiskUser findByEmail(String email) {
         return userRepository.findByEmail(email);
-    }
-
-    public boolean existByEmail(String email) {
-        return userRepository.existsByEmail(email);
     }
 
     @Transactional
@@ -33,12 +33,13 @@ public class DiskUserService {
             return false;
         }
         DiskUser user = new DiskUser(email, pass, role);
-        DiskFolder folder = diskFolderService.createFolder(user, email);
-//        UserObjectPermission permission = new UserObjectPermission(AccessRights.MASTER);
-//
-//        folder.addPermission(permission);
+        DiskFolder folder = diskFolderService.createFolder(user, email,null);
+        DiskBin bin = binService.createBin(user);
+
         user.setMainFolder(folder);
-//        user.addPermission(permission);
+        user.setBin(bin);
+//        bin.setUser(user);
+
         userRepository.save(user);
 
         return true;

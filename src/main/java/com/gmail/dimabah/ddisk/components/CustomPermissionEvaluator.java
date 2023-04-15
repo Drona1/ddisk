@@ -2,6 +2,7 @@ package com.gmail.dimabah.ddisk.components;
 
 import com.gmail.dimabah.ddisk.models.DiskFolder;
 import com.gmail.dimabah.ddisk.models.UserObjectPermission;
+import com.gmail.dimabah.ddisk.models.enums.AccessRights;
 import com.gmail.dimabah.ddisk.repositories.DiskFolderRepository;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -20,14 +21,15 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         if (targetDomainObject instanceof String && permission instanceof String) {
             String address = (String) targetDomainObject;
-//            String accessRight = (String) permission;
+            AccessRights accessRight = AccessRights.valueOf((String) permission);
             DiskFolder folder = diskFolderRepository.findByAddress(address);
             if (folder != null) {
                 if (folder.getOpenToAll()){
                     return true;
                 }
                 for (UserObjectPermission p : folder.getPermissions()) {
-                    if (p.getUser().getEmail().equals(authentication.getName())){
+                    if (p.getUser().getEmail().equals(authentication.getName())&&
+                            p.getAccessRights().getValue() >= accessRight.getValue()){
                         return true;
                     }
                 }

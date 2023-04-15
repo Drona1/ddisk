@@ -11,41 +11,46 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DiskFolderService{
-    private final DiskFolderRepository diskFolderRepository;
-    private final DiskObjectService diskObjectService;
+    private final DiskFolderRepository folderRepository;
+    private final DiskObjectService objectService;
 
     public DiskFolderService(DiskFolderRepository diskFolderRepository, DiskObjectService diskObjectService) {
-        this.diskFolderRepository = diskFolderRepository;
-        this.diskObjectService = diskObjectService;
+        this.folderRepository = diskFolderRepository;
+        this.objectService = diskObjectService;
     }
 
+    @Transactional
+    public DiskFolder createFolder(DiskUser user, String folderName, DiskFolder parentFolder) {
+        DiskObject object = objectService.createObj(folderName);
+        DiskFolder folder = new DiskFolder(object);
 
-    public DiskFolder createFolder(DiskUser user, String folderName) {
-//        DiskObject object = diskObjectService.createObj(user, folderName);
-//        DiskFolder folder = new DiskFolder(object);
-        DiskFolder folder = new DiskFolder(user,folderName);
-        String address = diskObjectService.generateAddress();
-        folder.setAddress(address);
+//        DiskFolder folder = new DiskFolder(user,folderName);
+//        String address = diskObjectService.generateAddress();
+//        folder.setAddress(address);
+//        DiskFolder folder = (DiskFolder) diskObjectService.createObj(user,folderName);
 
         UserObjectPermission permission = new UserObjectPermission(AccessRights.MASTER);
-        permission.setUser(user);
+        user.addPermission(permission);
         folder.addPermission(permission);
-
-        diskFolderRepository.save(folder);
+        if (parentFolder!= null){
+            parentFolder.addFolder(folder);
+        }
+        folderRepository.save(folder);
         return folder;
     }
+    @Transactional
     public DiskFolder findByAddress(String address){
-        return diskFolderRepository.findByAddress(address);
+        return folderRepository.findByAddress(address);
     }
 
     @Transactional
     public void addFolder(DiskFolder currentFolder, DiskFolder newFolder) {
         currentFolder.addFolder(newFolder);
-        diskFolderRepository.save(currentFolder);
+        folderRepository.save(currentFolder);
     }
 
     @Transactional
     public void updateFolder(DiskFolder folder){
-        diskFolderRepository.save(folder);
+        folderRepository.save(folder);
     }
 }

@@ -1,5 +1,6 @@
 package com.gmail.dimabah.ddisk.models;
 
+import com.gmail.dimabah.ddisk.dto.DiskObjectBinnedDTO;
 import com.gmail.dimabah.ddisk.dto.DiskObjectDTO;
 import com.gmail.dimabah.ddisk.models.enums.AccessRights;
 import jakarta.annotation.Nullable;
@@ -31,26 +32,24 @@ public class DiskObject {
     @Column(nullable = false)
     private Date createDate;
 
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date binnedDate;
+
     @OneToMany(mappedBy = "diskObject", cascade = CascadeType.ALL)
     private List<UserObjectPermission> permissions = new ArrayList<>();
 
 
-    public DiskObject(DiskUser user, String objName) {
+    public DiskObject(String objName) {
         this.name = objName;
         createDate = new Date();
-//        address = generateAddress();
-//
-//        UserObjectPermission permission = new UserObjectPermission(AccessRights.MASTER);
-//        addPermission(permission);
-//        user.addPermission(permission);
     }
     public DiskObject (DiskObject diskObject){
         this.name = diskObject.name;
         this.address = diskObject.address;
-        this.live = diskObject.live;
-        this.openToAll = diskObject.openToAll;
+//        this.live = diskObject.live;
+//        this.openToAll = diskObject.openToAll;
         this.createDate = diskObject.createDate;
-        this.permissions = diskObject.permissions;
+//        this.permissions = diskObject.permissions;
     }
 
     public void addPermission(UserObjectPermission userObjectPermission) {
@@ -66,5 +65,26 @@ public class DiskObject {
         result.setAddress(address);
         result.setCreateDate(createDate);
         return result;
+    }
+    public DiskObjectBinnedDTO toBinnedDTO(){
+        DiskObjectBinnedDTO result = new DiskObjectBinnedDTO();
+        result.setName(name);
+        result.setOwner(permissions.get(0).getUser().getEmail());
+        result.setAddress(address);
+        result.setBinnedDate(binnedDate);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "DiskObject{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", live=" + live +
+                ", openToAll=" + openToAll +
+                ", createDate=" + createDate +
+                ", permissions=" + permissions +
+                '}';
     }
 }
