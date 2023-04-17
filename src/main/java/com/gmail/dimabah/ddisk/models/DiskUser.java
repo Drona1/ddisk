@@ -1,7 +1,5 @@
 package com.gmail.dimabah.ddisk.models;
 
-
-import com.gmail.dimabah.ddisk.models.enums.AccessRights;
 import com.gmail.dimabah.ddisk.models.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class DiskUser {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -37,13 +35,21 @@ public class DiskUser {
     @OneToOne
     @JoinColumn(name = "bin_id")
     private DiskBin bin;
+
+    @ManyToMany
+    @JoinTable(name = "shared_object",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "object_id"))
+    private List<DiskObject> sharedObjects = new ArrayList<>();
+
     public DiskUser(String email, String pass, UserRole role) {
         this.email = email;
         this.pass = pass;
         this.role = role;
     }
+
     public void addPermission(UserObjectPermission userObjectPermission) {
-        if ( !permissions.contains(userObjectPermission)) {
+        if (!permissions.contains(userObjectPermission)) {
             permissions.add(userObjectPermission);
             userObjectPermission.setUser(this);
         }

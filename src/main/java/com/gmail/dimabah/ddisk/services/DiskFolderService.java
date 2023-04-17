@@ -10,7 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DiskFolderService{
+public class DiskFolderService {
     private final DiskFolderRepository folderRepository;
     private final DiskObjectService objectService;
 
@@ -24,33 +24,19 @@ public class DiskFolderService{
         DiskObject object = objectService.createObj(folderName);
         DiskFolder folder = new DiskFolder(object);
 
-//        DiskFolder folder = new DiskFolder(user,folderName);
-//        String address = diskObjectService.generateAddress();
-//        folder.setAddress(address);
-//        DiskFolder folder = (DiskFolder) diskObjectService.createObj(user,folderName);
-
         UserObjectPermission permission = new UserObjectPermission(AccessRights.MASTER);
         user.addPermission(permission);
         folder.addPermission(permission);
-        if (parentFolder!= null){
+        if (parentFolder != null) {
             parentFolder.addFolder(folder);
         }
         folderRepository.save(folder);
         return folder;
     }
+
     @Transactional
-    public DiskFolder findByAddress(String address){
+    public DiskFolder findByAddress(String address) {
         return folderRepository.findByAddress(address);
     }
 
-    @Transactional
-    public void addFolder(DiskFolder currentFolder, DiskFolder newFolder) {
-        currentFolder.addFolder(newFolder);
-        folderRepository.save(currentFolder);
-    }
-
-    @Transactional
-    public void updateFolder(DiskFolder folder){
-        folderRepository.save(folder);
-    }
 }

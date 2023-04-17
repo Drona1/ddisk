@@ -1,5 +1,6 @@
 package com.gmail.dimabah.ddisk.services;
 
+import com.gmail.dimabah.ddisk.dto.FileToDownloadDTO;
 import com.gmail.dimabah.ddisk.models.*;
 import com.gmail.dimabah.ddisk.models.enums.AccessRights;
 import com.gmail.dimabah.ddisk.repositories.DiskObjectRepository;
@@ -7,16 +8,17 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class DiskObjectService {
-    DiskObjectRepository objectRepository;
+    private final DiskObjectRepository objectRepository;
+    private final UserObjectPermissionService permissionService;
 
-    public DiskObjectService(DiskObjectRepository diskObjectRepository) {
+
+    public DiskObjectService(DiskObjectRepository diskObjectRepository, UserObjectPermissionService permissionService) {
         this.objectRepository = diskObjectRepository;
+        this.permissionService = permissionService;
     }
 
     public DiskObject createObj(String nameObj) {
@@ -38,8 +40,13 @@ public class DiskObjectService {
             char randomChar = characters.charAt(index);
             stringBuilder.append(randomChar);
         }
-        String result = checkForAddressCollisionAndCreateNewAddress(stringBuilder.toString());
-        return result;
+
+        return checkForAddressCollisionAndCreateNewAddress(stringBuilder.toString());
+    }
+
+    @Transactional
+    public void updateObj(DiskObject object) {
+        objectRepository.save(object);
     }
 
     private String checkForAddressCollisionAndCreateNewAddress(String address) {
@@ -59,7 +66,7 @@ public class DiskObjectService {
         addressList.forEach((x) -> {
             DiskObject object = objectRepository.findDiskObjectByAddress(x);
             if (checkUserPermission(object, user, AccessRights.EDITOR)) {
-                DiskBin bin = user.getBin();
+                DiskBin bin = object.getPermissions().get(0).getUser().getBin();
                 if (object instanceof DiskFile) {
                     bin.addFile((DiskFile) object);
                 } else if (object instanceof DiskFolder) {
@@ -73,7 +80,7 @@ public class DiskObjectService {
     public void delete(List<String> addressList, DiskUser user) {
         addressList.forEach((x) -> {
             DiskObject object = objectRepository.findDiskObjectByAddress(x);
-            if (checkUserPermission(object, user, AccessRights.EDITOR)) {
+            if (checkUserPermission(object, user, AccessRights.MASTER)) {
                 objectRepository.delete(object);
             }
         });
@@ -83,7 +90,7 @@ public class DiskObjectService {
     public void restore(List<String> addressList, DiskUser user) {
         addressList.forEach((x) -> {
             DiskObject object = objectRepository.findDiskObjectByAddress(x);
-            if (checkUserPermission(object, user, AccessRights.MASTER)) {
+            if (checkUserPermission(object, user, AccessRights.EDITOR)) {
                 DiskBin bin = user.getBin();
                 if (object instanceof DiskFile) {
                     bin.removeFile((DiskFile) object);
@@ -94,10 +101,11 @@ public class DiskObjectService {
         });
     }
 
+    @Transactional
     public boolean rename(String address, String newName, DiskUser user) {
         DiskObject object = objectRepository.findDiskObjectByAddress(address);
 
-        if (checkUserPermission(object, user, AccessRights.EDITOR)) return false;
+        if (!checkUserPermission(object, user, AccessRights.EDITOR)) return false;
 
         object.setName(newName);
         objectRepository.save(object);
@@ -105,24 +113,179 @@ public class DiskObjectService {
         return true;
     }
 
-    public List<File> getFileListByAddress(List<String> addressList, DiskUser user) {
-        List<File> files = new ArrayList<>();
+    @Transactional
+    public boolean share(Map<DiskUser, AccessRights> map,
+                         String globalAccessRight, String currentObj, DiskUser user) {
+
+        DiskObject object = objectRepository.findDiskObjectByAddress(currentObj);
+        boolean result;
+
+        if (object == null) return false;
+        if (!checkUserPermission(object, user, AccessRights.EDITOR)) {
+            return false;
+        }
+
+        result = checkForGlobalAccess(object, globalAccessRight, user);
+        if (map == null) {
+            map = new HashMap<>();
+        }
+        if (checkForChange(map, object)) {
+            result = true;
+        }
+        if (checkForNewUser(map, object)) {
+            result = true;
+        }
+        if (result) {
+            objectRepository.save(object);
+        }
+
+        return result;
+    }
+
+    private boolean checkForGlobalAccess(DiskObject object, String globalAccessRight, DiskUser user) {
+        if (!checkUserPermission(object, user, AccessRights.MASTER)) {
+            return false;
+        }
+        if (globalAccessRight != null) {
+            try {
+                AccessRights globalRights = AccessRights.valueOf(globalAccessRight.toUpperCase());
+                return changeShareInInternalObj(object, globalRights, null, true);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+        } else {
+            return changeShareInInternalObj(object, null, null, true);
+        }
+        return false;
+    }
+
+    private boolean checkForChange(Map<DiskUser, AccessRights> map, DiskObject object) {
+        List<UserObjectPermission> permissions = object.getPermissions();
+        List<Integer> indexPermToRemove = new LinkedList<>();
+        boolean result = false;
+        for (int i = 1; i < permissions.size(); i++) {
+            var permission = permissions.get(i);
+            var tempUser = permission.getUser();
+
+            if (map.containsKey(tempUser)) {
+                AccessRights currentRight = map.get(tempUser);
+                if (changeShareInInternalObj(object, currentRight, tempUser, false)) {
+                    result = true;
+                }
+                continue;
+            }
+            indexPermToRemove.add(0, i);
+            object.getSharedToUsers().remove(tempUser);
+            tempUser.getSharedObjects().remove(object);
+        }
+
+        indexPermToRemove.forEach((i) -> {
+            changeShareInInternalObj(object, null, permissions.get(i).getUser(), false);
+        });
+
+        return result || indexPermToRemove.size() > 0;
+    }
+
+    private boolean checkForNewUser(Map<DiskUser, AccessRights> map, DiskObject object) {
+        List<UserObjectPermission> permissions = object.getPermissions();
+        if (map.size() + 1 == permissions.size()) {
+            return false;
+        }
+        map.forEach((key, value) -> {
+            for (int i = 0; i < permissions.size(); i++) {
+                var permission = permissions.get(i);
+                if (permission.getUser().equals(key)) {
+                    break;
+                }
+                if (i == permissions.size() - 1) {
+                    object.addUserToShared(key);
+                    changeShareInInternalObj(object, value, key, false);
+                }
+            }
+        });
+        return true;
+    }
+
+    private boolean changeShareInInternalObj(DiskObject object, AccessRights rights, DiskUser user, boolean global) {
+        if (global) {
+            if (!changeGlobalRights(object, rights)) return false;
+        } else {
+            if (!changeAccessRights(object, rights, user)) return false;
+        }
+
+        if (object instanceof DiskFolder) {
+            for (var file : ((DiskFolder) object).getFileList()) {
+                if (global) {
+                    changeGlobalRights(file, rights);
+                } else {
+                    changeAccessRights(file, rights, user);
+                }
+            }
+            for (var folder : ((DiskFolder) object).getFolderList()) {
+                changeShareInInternalObj(folder, rights, user, global);
+            }
+        }
+        return true;
+    }
+
+    private boolean changeAccessRights(DiskObject object, AccessRights rights, DiskUser user) {
+        UserObjectPermission permissionToDelete = null;
+        for (var permission : object.getPermissions()) {
+            if (permission.getUser().equals(user)) {
+                if (rights == null) {
+                    permissionToDelete = permission;
+                    break;
+                }
+                if (permission.getAccessRights() != rights) {
+                    permission.setAccessRights(rights);
+                    return true;
+                }
+                return false;
+            }
+        }
+        if (permissionToDelete != null) {
+            permissionToDelete.getUser().getPermissions().remove(permissionToDelete);
+            object.getPermissions().remove(permissionToDelete);
+            permissionService.delete(permissionToDelete);
+            return true;
+        }
+        if (rights != null) {
+            UserObjectPermission uop = new UserObjectPermission(rights);
+            user.addPermission(uop);
+            object.addPermission(uop);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean changeGlobalRights(DiskObject object, AccessRights rights) {
+        if (object.getOpenToAll() != rights) {
+            object.setOpenToAll(rights);
+            return true;
+        }
+        return false;
+    }
+
+    @Transactional
+    public List<FileToDownloadDTO> getFileListByAddress(List<String> addressList, DiskUser user) {
+        List<FileToDownloadDTO> files = new ArrayList<>();
         addressList.forEach((x) -> {
             DiskObject object = objectRepository.findDiskObjectByAddress(x);
-                addInternalObjects(object, files, "*", user);
+            addInternalObjects(object, files, "*", user);
         });
         return files;
     }
 
 
-    private void addInternalObjects(DiskObject object, List<File> files, String path, DiskUser user) {
+    private void addInternalObjects(DiskObject object, List<FileToDownloadDTO> files, String path, DiskUser user) {
         if (!object.getLive()) return;
         if (!checkUserPermission(object, user, AccessRights.VIEWER)) return;
 
         if (object instanceof DiskFile) {
-            File file = new File("D:/upload_dir/" +
+            FileToDownloadDTO file = new FileToDownloadDTO(new File("D:/upload_dir/" +
                     object.getPermissions().get(0).getUser().getEmail() + "/" +
-                    object.getAddress() + "/" + object.getName());
+                    object.getAddress() + "/" + object.getOriginalName()), object.getName());
+
             if ("*".equals(path)) {
                 files.add(0, file);
             } else {
@@ -130,7 +293,7 @@ public class DiskObjectService {
             }
         } else {
             path = path + "/" + object.getName();
-            files.add(new File(path));
+            files.add(new FileToDownloadDTO(new File(path), ""));
             for (var file : ((DiskFolder) object).getFileList()) {
                 addInternalObjects(file, files, path, user);
             }
@@ -142,9 +305,11 @@ public class DiskObjectService {
     }
 
     private boolean checkUserPermission(DiskObject object, DiskUser user, AccessRights rights) {
-        if (object.getOpenToAll()) {
+        if (object.getOpenToAll() != null && object.getOpenToAll().getValue() >= rights.getValue()) {
             return true;
         }
+        if (user == null) return false;
+
         for (var permission : object.getPermissions()) {
             if (permission.getUser().equals(user) &&
                     permission.getAccessRights().getValue() >= rights.getValue()) {
@@ -153,4 +318,5 @@ public class DiskObjectService {
         }
         return false;
     }
+
 }

@@ -6,8 +6,6 @@ import com.gmail.dimabah.ddisk.repositories.DiskFileRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class DiskFileService {
     DiskFileRepository fileRepository;
@@ -33,6 +31,11 @@ public class DiskFileService {
         return file;
     }
 
+    @Transactional
+    public DiskFile findByAddress(String address) {
+        return fileRepository.findByAddress(address);
+    }
+
     private String formatSize(long size) {
         if (size / 1024 / 1024 != 0) {
             double result = size / 1024.0 / 1024;
@@ -43,11 +46,4 @@ public class DiskFileService {
         }
         return String.format("%d B", size);
     }
-//        @Transactional
-//    public void remove(List<String> addressList) {
-//        addressList.forEach((x) -> {
-//            DiskFile file = fileRepository.findByAddress(x);
-//            file.setLive(false);
-//        });
-//    }
 }

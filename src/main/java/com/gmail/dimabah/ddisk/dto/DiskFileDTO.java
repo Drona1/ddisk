@@ -3,6 +3,6 @@ package com.gmail.dimabah.ddisk.dto;
 import lombok.Data;
 
 @Data
-public class DiskFileDTO extends DiskObjectDTO{
+public class DiskFileDTO extends DiskObjectDTO {
     private String size;
 }

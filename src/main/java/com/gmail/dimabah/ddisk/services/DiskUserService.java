@@ -1,14 +1,16 @@
 package com.gmail.dimabah.ddisk.services;
 
-import com.gmail.dimabah.ddisk.models.DiskBin;
-import com.gmail.dimabah.ddisk.models.DiskFolder;
-import com.gmail.dimabah.ddisk.models.DiskUser;
-import com.gmail.dimabah.ddisk.models.UserObjectPermission;
+
+import com.gmail.dimabah.ddisk.models.*;
 import com.gmail.dimabah.ddisk.models.enums.AccessRights;
 import com.gmail.dimabah.ddisk.models.enums.UserRole;
 import com.gmail.dimabah.ddisk.repositories.DiskUserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class DiskUserService {
@@ -33,18 +35,34 @@ public class DiskUserService {
             return false;
         }
         DiskUser user = new DiskUser(email, pass, role);
-        DiskFolder folder = diskFolderService.createFolder(user, email,null);
-        DiskBin bin = binService.createBin(user);
+        DiskFolder folder = diskFolderService.createFolder(user, email, null);
+        DiskBin bin = binService.createBin();
 
         user.setMainFolder(folder);
         user.setBin(bin);
-//        bin.setUser(user);
 
         userRepository.save(user);
 
         return true;
     }
 
+    public Map<DiskUser, AccessRights> convertToMap(String[] userEmails, String[] accessRights) {
+        Map<DiskUser, AccessRights> map = new HashMap<>();
+
+        for (int i = 0; i < userEmails.length; i++) {
+            DiskUser user = findByEmail(userEmails[i]);
+            if (user == null) continue;
+            try {
+                if (accessRights[i] != null) {
+                    AccessRights tempRight = AccessRights.valueOf(accessRights[i].toUpperCase());
+                    map.put(user, tempRight);
+                }
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+        return map;
+    }
 
 
 }

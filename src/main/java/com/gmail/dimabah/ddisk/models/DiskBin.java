@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Data
@@ -16,7 +15,7 @@ import java.util.Objects;
 public class DiskBin {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany(mappedBy = "bin")
@@ -29,24 +28,21 @@ public class DiskBin {
     @JoinColumn(name = "user_id")
     private DiskUser user;
 
-    public DiskBin(DiskUser user) {
-        this.user = user;
-    }
-
     public void addFolder(DiskFolder folder) {
         if (!folderList.contains(folder)) {
             folder.setLive(false);
-            setLiveForInternalObjects(folder,false);
+            setLiveForInternalObjects(folder, false);
             folder.setBinnedDate(new Date());
             folderList.add(folder);
             folder.setBin(this);
         }
     }
-    private void setLiveForInternalObjects(DiskFolder folder, boolean live){
-        folder.getFileList().forEach((e)->e.setLive(live));
-        folder.getFolderList().forEach((e)->{
+
+    private void setLiveForInternalObjects(DiskFolder folder, boolean live) {
+        folder.getFileList().forEach((e) -> e.setLive(live));
+        folder.getFolderList().forEach((e) -> {
             e.setLive(live);
-            setLiveForInternalObjects(e,live);
+            setLiveForInternalObjects(e, live);
         });
     }
 
@@ -58,7 +54,8 @@ public class DiskBin {
             file.setBin(this);
         }
     }
-    public void removeFile(DiskFile file){
+
+    public void removeFile(DiskFile file) {
         if (fileList.contains(file)) {
             file.setLive(true);
             file.setBinnedDate(null);
@@ -66,15 +63,17 @@ public class DiskBin {
             file.setBin(null);
         }
     }
-    public void removeFolder(DiskFolder folder){
+
+    public void removeFolder(DiskFolder folder) {
         if (folderList.contains(folder)) {
             folder.setLive(true);
-            setLiveForInternalObjects(folder,true);
+            setLiveForInternalObjects(folder, true);
             folder.setBinnedDate(null);
             folderList.remove(folder);
             folder.setBin(null);
         }
     }
+
     public DiskBinDTO toDTO() {
         DiskBinDTO result = new DiskBinDTO();
         List<DiskFolderBinnedDTO> folders = new ArrayList<>();
@@ -91,7 +90,6 @@ public class DiskBin {
 
         return result;
     }
-
 
 
 }

@@ -3,6 +3,7 @@ package com.gmail.dimabah.ddisk.dto;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Map;
 
 @Data
 public class DiskObjectDTO {
@@ -10,4 +11,6 @@ public class DiskObjectDTO {
     private String address;
     private String owner;
     private Date createDate;
+    private String openToAll;
+    Map<String, String> permissions;
 }

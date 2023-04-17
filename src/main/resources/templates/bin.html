@@ -1,267 +1,185 @@
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>dimabah.gmail.com</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-  <!-- <link rel="stylesheet" href="styles.css"> -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <meta charset="UTF-8">
+    <title>dimabah.gmail.com</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 <body data-bs-theme="dark">
-<svg class="d-none" xmlns="http://www.w3.org/2000/svg" >
-  <symbol id="ddisk"  fill="currentColor" viewBox="0 0 16 16">
-    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-    <path d="M12.331 9.5a1 1 0 0 1 0 1A4.998 4.998 0 0 1 8 13a4.998 4.998 0 0 1-4.33-2.5A1 1 0 0 1 4.535 9h6.93a1 1 0 0 1 .866.5zM7 6.5c0 .828-.448 0-1 0s-1 .828-1 0S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 0-1 0s-1 .828-1 0S9.448 5 10 5s1 .672 1 1.5z"/>
-  </symbol>
-  <symbol id="my_ddisk"  fill="currentColor" viewBox="0 0 16 16">
-    <path d="M4.5 11a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zM3 10.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/>
-    <path d="M16 11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V9.51c0-.418.105-.83.305-1.197l2.472-4.531A1.5 1.5 0 0 1 4.094 3h7.812a1.5 1.5 0 0 1 1.317.782l2.472 4.53c.2.368.305.78.305 1.198V11zM3.655 4.26 1.592 8.043C1.724 8.014 1.86 8 2 8h12c.14 0 .276.014.408.042L12.345 4.26a.5.5 0 0 0-.439-.26H4.094a.5.5 0 0 0-.44.26zM1 10v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1z"/>
-  </symbol>
-  <symbol  id="bin"  fill="currentColor" viewBox="0 0 16 16">
-    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
-    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
-  </symbol>
-  <symbol  id="new"  fill="currentColor" viewBox="0 0 16 16">
-    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
-  </symbol>
+<svg class="d-none" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="ddisk" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        <path d="M12.331 9.5a1 1 0 0 1 0 1A4.998 4.998 0 0 1 8 13a4.998 4.998 0 0 1-4.33-2.5A1 1 0 0 1 4.535 9h6.93a1 1 0 0 1 .866.5zM7 6.5c0 .828-.448 0-1 0s-1 .828-1 0S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 0-1 0s-1 .828-1 0S9.448 5 10 5s1 .672 1 1.5z"/>
+    </symbol>
+    <symbol id="my_ddisk" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M4.5 11a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zM3 10.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/>
+        <path d="M16 11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V9.51c0-.418.105-.83.305-1.197l2.472-4.531A1.5 1.5 0 0 1 4.094 3h7.812a1.5 1.5 0 0 1 1.317.782l2.472 4.53c.2.368.305.78.305 1.198V11zM3.655 4.26 1.592 8.043C1.724 8.014 1.86 8 2 8h12c.14 0 .276.014.408.042L12.345 4.26a.5.5 0 0 0-.439-.26H4.094a.5.5 0 0 0-.44.26zM1 10v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1z"/>
+    </symbol>
+    <symbol id="bin" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+    </symbol>
+    <symbol id="new" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd"
+              d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+    </symbol>
+    <symbol id="shareWithMe" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
+    </symbol>
 </svg>
-
-<div class="modal fade" id="newFolderModal" tabindex="-1" aria-labelledby="newFolderModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="newFolderModallLabel">New folder</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form role="form" class="form-horizontal" action="/upload" method="post">
-        <div class="modal-body">
-          <input class="form-control text-bg-dark" type="text" name = "newFolder" value="Untitled folder" required="true" minlength="1">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Create</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 <div class="dropdown">
-  <ul class="dropdown-menu dropdown-menu" id="tableMenu">
-    <li><a class="dropdown-item" type="button" id="restoreButton">Restore</a></li>
-    <hr class="dropdown-divider">
-    <li><a class="dropdown-item" type="button" id="deleteButton" >Delete</a></li>
-  </ul>
+    <ul class="dropdown-menu dropdown-menu" id="tableMenu">
+        <li><a class="dropdown-item" type="button" id="restoreButton">Restore</a></li>
+        <hr class="dropdown-divider">
+        <li><a class="dropdown-item" type="button" id="deleteButton">Delete</a></li>
+    </ul>
 </div>
 
 <main class="d-flex flex-nowrap">
-  <div class="flex-column flex-shrink-0 p-3 col-md-2"  >
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-      <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#ddisk"/></svg>
-      <span class="fs-4">DDisk</span>
-    </a>
-    <hr>
-    <div class="dropdown">
-      <button class="btn btn-secondary dropdown-toggle"  disabled type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#new"/></svg>
-        New
-      </button>
-    </div>
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item">
-        <a href="/" class="nav-link text-white text-decoration-none">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#my_ddisk"/></svg>
-          MyDDisk
+    <div class="flex-column flex-shrink-0 p-3 col-md-2">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+            <svg class="bi pe-none me-2" width="40" height="32">
+                <use xlink:href="#ddisk"/>
+            </svg>
+            <span class="fs-4">DDisk</span>
         </a>
-      </li>
-      <li>
-        <a href="/bin" class="nav-link text-white text-decoration-none">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#bin"/></svg>
-          Bin
-        </a>
-      </li>
-    </ul>
-    <hr>
-    <div class="dropdown">
-      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        <strong th:text="${email}"></strong>
-      </a>
-      <ul class="dropdown-menu dropdown-menu text-small shadow">
-        <li><a class="dropdown-item" href="/logout">Sign out</a></li>
-      </ul>
+        <hr>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" disabled type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                <svg class="bi pe-none me-2" width="16" height="16">
+                    <use xlink:href="#new"/>
+                </svg>
+                New
+            </button>
+        </div>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="/" class="nav-link text-white text-decoration-none">
+                    <svg class="bi pe-none me-2" width="16" height="16">
+                        <use xlink:href="#my_ddisk"/>
+                    </svg>
+                    MyDDisk
+                </a>
+            </li>
+            <li>
+                <a href="/shared" class="nav-link text-white text-decoration-none">
+                    <svg class="bi pe-none me-2" width="16" height="16">
+                        <use xlink:href="#shareWithMe"/>
+                    </svg>
+                    Shared with me
+                </a>
+            </li>
+            <li>
+                <a href="/bin" class="nav-link text-white text-decoration-none">
+                    <svg class="bi pe-none me-2" width="16" height="16">
+                        <use xlink:href="#bin"/>
+                    </svg>
+                    Bin
+                </a>
+            </li>
+        </ul>
+        <hr>
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+               data-bs-toggle="dropdown" aria-expanded="false">
+                <strong th:text="${email}"></strong>
+            </a>
+            <ul th:if="${email!='anonymousUser'}" class="dropdown-menu dropdown-menu text-small shadow">
+                <li><a class="dropdown-item" href="/logout">Sign out</a></li>
+            </ul>
+        </div>
     </div>
-  </div>
 
-  <svg class="d-none" xmlns="http://www.w3.org/2000/svg">
-    <symbol id="iFolder"  fill="currentColor" viewBox="0 0 16 16">
-      <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"/>
-    </symbol>
-    <symbol id="iFile"  fill="currentColor" viewBox="0 0 16 16">
-      <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
-      <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
-    </symbol>
-  </svg>
-  <div class="d-flex flex-column flex-shrink-0 p-3 col-md-10 vh-100" style="-webkit-user-drag: none;" draggable="true" id="dragItem"  >
-    <input class="form-control text-bg-dark w-100 rounded-0 border-0" type="text" placeholder="Search in Ddisk" aria-label="Search">
-    <table class="table table-dark table-hover">
-      <thead>
-      <tr>
-        <td onclick="toggleAllCheckboxes(this)">
-          <input class="form-check-input mt-0" type="checkbox"
-                 th:id="allObj"/>
-        </td>
-        <th scope="col">Name</th>
-        <th scope="col">Owner</th>
-        <th scope="col">Date binned</th>
-        <th scope="col">File size</th>
-        <th scope="col">Original location</th>
-        <td></td>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="folder: ${bin.getFolders()}"
-          onclick="selectRow(this, false)"
-          oncontextmenu="selectRow(this, true)">
+    <svg class="d-none" xmlns="http://www.w3.org/2000/svg">
+        <symbol id="iFolder" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"/>
+        </symbol>
+        <symbol id="iFile" fill="green" viewBox="0 0 16 16">
+            <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+        </symbol>
+        <symbol id="iShare" fill="currentColor" viewBox="0 -5 16 25">
+            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8Zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022ZM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816ZM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/>
+        </symbol>
+    </svg>
+    <div class="d-flex flex-column flex-shrink-0 p-3 col-md-10 vh-100" style="-webkit-user-drag: none;">
+        <table class="table table-dark table-hover">
+            <thead>
+            <tr>
+                <td onclick="toggleAllCheckboxes(this)">
+                    <input class="form-check-input mt-0" type="checkbox"
+                           th:id="allObj"/>
+                </td>
+                <th scope="col">Name</th>
+                <th scope="col">Owner</th>
+                <th scope="col">Date binned</th>
+                <th scope="col">File size</th>
+                <th scope="col">Original location</th>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="folder: ${bin.getFolders()}"
+                onclick="selectRow(this, false)"
+                oncontextmenu="selectRow(this, true)">
 
-        <td onclick="event.stopPropagation()">
-          <input class="form-check-input mt-0" type="checkbox" name="selectedObjects[]"
-                 th:value="${folder.address}"/>
-        </td>
-        <td class="col-md-5">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#iFolder"/></svg>
-          <label th:text="${folder.name}"/>
-        </td>
-        <td class="col-md-3"th:text="${folder.owner}"/>
-        <td th:text="${#dates.format(folder.binnedDate,'dd-MM-yyyy (HH:mm:ss)')}"/>
-        <td></td>
-        <td th:text="${folder.parentFolderName}"/>
-        <td>
-          <button class="btn btn-secondary"  type="button" onclick="showTableMenu()">
-            ...
-          </button>
-        </td>
+                <td onclick="event.stopPropagation()">
+                    <input class="form-check-input mt-0" type="checkbox" name="selectedObjects[]"
+                           th:value="${folder.address}"/>
+                </td>
+                <td class="col-md-5">
+                    <svg class="bi pe-none me-2" width="32" height="32">
+                        <use xlink:href="#iFolder"/>
+                    </svg>
+                    <label th:text="${folder.name}"/>
+                </td>
+                <td class="col-md-3" th:text="${folder.owner}"/>
+                <td th:text="${#dates.format(folder.binnedDate,'dd-MM-yyyy (HH:mm:ss)')}"/>
+                <td></td>
+                <td th:text="${folder.parentFolderName}"/>
+                <td>
+                    <button class="btn btn-secondary" type="button" onclick="showTableMenu()">
+                        ...
+                    </button>
+                </td>
 
-      </tr>
-      <tr th:each="file: ${bin.getFiles()}"
-          onclick="selectRow(this, false)"
-          oncontextmenu="selectRow(this, true)">
-        <td onclick="event.stopPropagation()">
-          <input class="form-check-input mt-0" type="checkbox" name="selectedObjects[]"
-                 th:value="${file.address}"/>
-        </td>
-        <td class="col-md-5">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#iFile"/></svg>
-          <label th:text="${file.name}"/>
-        </td>
-        <td class="col-md-3" th:text="${file.owner}"/>
-        <td th:text="${#dates.format(file.binnedDate,'dd-MM-yyyy (HH:mm:ss)')}"/>
-        <td th:text="${file.size}"/>
-        <td th:text="${file.parentFolderName}"/>
-        <td>
+            </tr>
+            <tr th:each="file: ${bin.getFiles()}"
+                onclick="selectRow(this, false)"
+                oncontextmenu="selectRow(this, true)">
+                <td onclick="event.stopPropagation()">
+                    <input class="form-check-input mt-0" type="checkbox" name="selectedObjects[]"
+                           th:value="${file.address}"/>
+                </td>
+                <td class="col-md-5">
+                    <svg class="bi pe-none me-2" width="32" height="32">
+                        <use xlink:href="#iFile"/>
+                    </svg>
+                    <label th:text="${file.name}"/>
+                </td>
+                <td class="col-md-3" th:text="${file.owner}"/>
+                <td th:text="${#dates.format(file.binnedDate,'dd-MM-yyyy (HH:mm:ss)')}"/>
+                <td th:text="${file.size}"/>
+                <td th:text="${file.parentFolderName}"/>
+                <td>
 
-          <button class="btn btn-secondary"  type="button" onclick="showTableMenu()">
-            ...
-          </button>
-
-
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+                    <button class="btn btn-secondary" type="button" onclick="showTableMenu()">
+                        ...
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
 </main>
-<!--<script src="../static/js/remove.js"></script>-->
-<script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script>
-  $('#deleteButton').click(function () {
-    var addressList = {'selectedObjects[]': []};
 
-    $(":checked").each(function () {
-      console.log($(this).id);
-      if ($(this).val() != "on") {
-        addressList['selectedObjects[]'].push($(this).val());
-      }
-    });
-    console.log(addressList);
-    $.post("/delete", addressList, function (data, status) {
-      window.location.reload();
-    });
-  });
-  $('#restoreButton').click(function () {
-    var addressList = {'selectedObjects[]': []};
+<script src="https://code.jquery.com/jquery-3.4.0.min.js"
+        integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+<script src="/js/bin/buttons.js"></script>
+<script src="/js/bin/main.js"></script>
 
-    $(":checked").each(function () {
-      console.log($(this).id);
-      if ($(this).val() != "on") {
-        addressList['selectedObjects[]'].push($(this).val());
-      }
-    });
-    console.log(addressList);
-    $.post("/restore", addressList, function (data, status) {
-      window.location.reload();
-    });
-  });
-</script>
-
-<script>
-  function selectRow(row, contextmenuFlag) {
-
-    let checkboxes = document.querySelectorAll('input[type=checkbox]');
-    let checkbox = row.querySelector('input[type=checkbox]');
-    if (contextmenuFlag===false || checkbox.checked === false){
-      for (let i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].checked = false;
-      }
-    }
-    checkbox.checked = true;
-  }
-  function toggleAllCheckboxes(toggle) {
-    var checkboxes = document.querySelectorAll('table input[type="checkbox"]');
-    for (var i = 0; i < checkboxes.length; i++) {
-      checkboxes[i].checked = !toggle.checked;
-    }
-    toggle.checked=!toggle.checked;
-  }
-
-</script>
-<script>
-  var tableMenu = document.querySelector("#tableMenu");
-  var menuVisible = false;
-
-  function showTableMenu() {
-    tableMenu.style.display = "block";
-    tableMenu.style.position = "absolute";
-    if (event.clientX > screen.width-180){
-      tableMenu.style.left = screen.width-180 + "px";
-    }else {
-      tableMenu.style.left = event.clientX + "px";
-    }
-    if (event.clientY > screen.height-260){
-      tableMenu.style.top = screen.height-350 + "px";
-    }else {
-      tableMenu.style.top = event.clientY + "px";
-    }
-    menuVisible = true;
-  }
-
-  document.addEventListener("contextmenu", function(event) {
-    event.preventDefault();
-    var target = event.target;
-    if (target.tagName === "TD") {
-      showTableMenu();
-    }
-  });
-
-  document.addEventListener("click", function(event) {
-
-    if (menuVisible && event.target.tagName!=="BUTTON") {
-      tableMenu.style.display = "none";
-      tableMenu.style.display = "";
-      menuVisible = false;
-    }
-  });
-</script>
 </body>
 </html>

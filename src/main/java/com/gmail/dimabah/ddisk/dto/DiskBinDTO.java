@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Data
 public class DiskBinDTO {
     private List<DiskFolderBinnedDTO> folders = new ArrayList<>();

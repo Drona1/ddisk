@@ -1,6 +1,6 @@
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charSet="UTF-8">
     <title>dimabah.gmail.com</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <!-- <link rel="stylesheet" href="styles.css"> -->
@@ -8,25 +8,29 @@
 
 </head>
 <body data-bs-theme="dark">
-<svg class="d-none" xmlns="http://www.w3.org/2000/svg" >
-    <symbol id="ddisk"  fill="currentColor" viewBox="0 0 16 16">
+<svg class="d-none" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="ddisk" fill="currentColor" viewBox="0 0 16 16">
         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
         <path d="M12.331 9.5a1 1 0 0 1 0 1A4.998 4.998 0 0 1 8 13a4.998 4.998 0 0 1-4.33-2.5A1 1 0 0 1 4.535 9h6.93a1 1 0 0 1 .866.5zM7 6.5c0 .828-.448 0-1 0s-1 .828-1 0S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 0-1 0s-1 .828-1 0S9.448 5 10 5s1 .672 1 1.5z"/>
     </symbol>
-    <symbol id="my_ddisk"  fill="currentColor" viewBox="0 0 16 16">
+    <symbol id="my_ddisk" fill="currentColor" viewBox="0 0 16 16">
         <path d="M4.5 11a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zM3 10.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/>
         <path d="M16 11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V9.51c0-.418.105-.83.305-1.197l2.472-4.531A1.5 1.5 0 0 1 4.094 3h7.812a1.5 1.5 0 0 1 1.317.782l2.472 4.53c.2.368.305.78.305 1.198V11zM3.655 4.26 1.592 8.043C1.724 8.014 1.86 8 2 8h12c.14 0 .276.014.408.042L12.345 4.26a.5.5 0 0 0-.439-.26H4.094a.5.5 0 0 0-.44.26zM1 10v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1z"/>
     </symbol>
-    <symbol  id="bin"  fill="currentColor" viewBox="0 0 16 16">
+    <symbol id="bin" fill="currentColor" viewBox="0 0 16 16">
         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
         <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
     </symbol>
-    <symbol  id="new"  fill="currentColor" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+    <symbol id="new" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd"
+              d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+    </symbol>
+    <symbol id="shareWithMe" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
     </symbol>
 </svg>
 
-<div class="modal fade" id="newFolderModal" tabindex="-1" aria-labelledby="newFolderModalLabel" aria-hidden="true">
+<div class="modal fade" id="newFolderModal" tabIndex="-1" aria-labelledby="newFolderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -35,8 +39,9 @@
             </div>
             <form role="form" class="form-horizontal" action="/upload" method="post">
                 <div class="modal-body">
-                    <input class="form-control text-bg-dark" type="text" name = "newFolder" value="Untitled folder" required="true" minlength="1">
-                    <input type="hidden" id="currentFolder" name = "currentFolder" th:value="${folder.getAddress()}">
+                    <input class="form-control text-bg-dark" type="text" name="newFolder" value="Untitled folder"
+                           required minLength="1">
+                    <input type="hidden" id="currentFolder" name="currentFolder" th:value="${folder.getAddress()}">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -46,7 +51,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="renameModal" tabindex="-1" aria-labelledby="renameModalLabel" aria-hidden="true">
+<div class="modal fade" id="renameModal" tabIndex="-1" aria-labelledby="renameModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -55,9 +60,10 @@
             </div>
             <form role="form" class="form-horizontal" action="/rename" method="post">
                 <div class="modal-body">
-                    <input class="form-control text-bg-dark" type="text" id="newName" name = "newName" value="Untitled folder" required="true" minlength="1">
-                    <input type="hidden" id="renameAddress" name = "address">
-                    <input type="hidden" name = "currentFolder" th:value="${folder.getAddress()}">
+                    <input class="form-control text-bg-dark" type="text" id="newName" name="newName"
+                           value="Untitled folder" required minLength="1">
+                    <input type="hidden" id="renameAddress" name="address">
+                    <input type="hidden" name="currentFolder" th:value="${folder.getAddress()}">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -67,43 +73,130 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="shareModal" tabIndex="-1" aria-labelledby="shareModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="shareModallLabel">Share</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form role="form" class="form-horizontal" action="/share" method="post">
-                <div class="modal-body d-flex">
-                    <div class="form-floating col-md-10">
-                        <input class="form-control text-bg-dark" type="email" id="shareEmail" name = "email" placeholder="email" required="true" minlength="1">
-                        <label for="shareEmail">Add user email</label>
-                    </div>
-                    <div class="dropdown col align-self-center">
-                        <button class="btn btn-secondary dropdown-toggle"  type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Editor
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu ">
-                            <li><a class="dropdown-item" type="button">Editor</a></li>
-                            <li><a class="dropdown-item" type="button">Viewer</a></li>
+            <form role="form" class="form-horizontal">
+                <div class="modal-body">
+                    <div class="modal-body d-flex align-items-center">
+                        <div class="form-floating col-md-7 align-items-center">
+                            <input class="form-control text-bg-dark" type="email" id="shareEmail" name="email"
+                                   placeholder="email" required minLength="1">
+                            <label htmlFor="shareEmail">Add user email</label>
+                        </div>
+                        <div class="btn-group dropend col-md-3 align-self-center">
+                            <button class="btn  dropdown-toggle text-bg-dark" id="accessRight" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                Editor
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu col-md-2">
+                                <li><a class="dropdown-item" type="button"
+                                       onClick="changeButtonName(event,'Editor ')">Editor </a></li>
+                                <li><a class="dropdown-item" type="button"
+                                       onClick="changeButtonName(event,'Viewer')">Viewer</a></li>
                             </ul>
+                        </div>
+                        <div class="form-floating col-md-2 align-items-center">
+                            <button type="submit" class="btn btn-primary" onClick="addRow(event)">Add</button>
+                        </div>
                     </div>
-                    <!-- <div class="form-floating">
-                        <input type="password" class="form-control text-bg-dark" id="password" name="pass"
-                               placeholder="Password" required minlength="8">
-                        <label for="password">Password</label>
-                    </div> -->
 
+                    <!--                    <div class="modal-body" style="height: 280;">-->
+                    <div class="modal-body" style="height: 30%">
+                        <hr class="border border-success border-1 opacity-25">
+                        <table id="tableShare">
+                            <h6 class="container text-center">People with access</h6>
+                            <tbody>
+                            <tr>
+                                <td class="col-md-10">
+                                    <label id="owner"></label>
+                                </td>
 
-                    <!-- <input type="email" class="form-control text-bg-dark" id="email" name="email"
-                    placeholder="Email" minlength="2" required> -->
+                                <td>
+                                    <div class="dropdown col align-self-center">
+                                        <button class="btn text-bg-dark" type="button">
+                                            Owner
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="trPattern" hidden=true>
+                                <td class="col-md-10">
+                                </td>
+                                <td>
+                                    <div class="btn-group dropend col align-self-center">
+                                        <button class="btn  dropdown-toggle text-bg-dark" type="button"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                            Editor
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu col-md-2">
+                                            <li><a class="dropdown-item" type="button"
+                                                   onClick="changeButtonName(event,'Editor ')">Editor </a></li>
+                                            <li><a class="dropdown-item" type="button"
+                                                   onClick="changeButtonName(event,'Viewer')">Viewer</a></li>
+                                            <hr class="dropdown-divider">
+                                            <li><a class="dropdown-item" type="button"
+                                                   onClick="removeRow(event)">Delete</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="container">
+                        <hr class="border border-success border-1 opacity-25">
+                        <h6 class="container text-center">General access</h6>
+                        <div class="row">
+                            <div class="btn-group dropend  col-6">
+                                <button class="btn  dropdown-toggle text-bg-dark" id="globalAccessRight"
+                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Restricted
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu col-md-2">
+                                    <li><a class="dropdown-item" type="button" onClick="showGlobalButton(event)">Restricted</a>
+                                    </li>
+                                    <li><a class="dropdown-item" type="button" onClick="showGlobalButton(event)">Anyone
+                                        with the link</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-3">
 
+                            </div>
+                            <div class="btn-group dropend col col-lg-2 align-self-center">
+                                <button class="btn  dropdown-toggle text-bg-dark" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false" id="globalButton" hidden="true">
+                                    Editor
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu col-md-2">
+                                    <li><a class="dropdown-item" type="button"
+                                           onClick="changeButtonName(event,'Editor')">Editor </a></li>
+                                    <li><a class="dropdown-item" type="button"
+                                           onClick="changeButtonName(event,'Viewer')">Viewer</a></li>
+                                </ul>
+                            </div>
+                            <label htmlFor="globalAccessRight" class="form-label" id="globalAccessLabel">Only people
+                                with access can open with the link</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Rename</button>
-                    <input type="hidden" name = "currentFolder" th:value="${folder.getAddress()}">
+
+                <div class="modal-footer d-flex">
+                    <div class="col">
+                        <button type="button" class="btn btn-outline-info" id="copyLink">
+                            Copy link
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="cancelShareButton" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" id="saveShareButton">Save</button>
                 </div>
             </form>
         </div>
@@ -111,8 +204,10 @@
 </div>
 <div class="dropdown">
     <ul class="dropdown-menu dropdown-menu" id="tableMenu">
-        <li id="share"><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#shareModal">Share</a></li>
-        <li id="rename"><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#renameModal">Rename</a></li>
+        <li id="share"><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#shareModal"
+                          onClick="showTable()">Share</a></li>
+        <li id="rename"><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#renameModal">Rename</a>
+        </li>
         <hr class="dropdown-divider">
         <li><a class="dropdown-item" type="button" id="downloadButton">Download</a></li>
         <hr class="dropdown-divider">
@@ -121,24 +216,30 @@
 </div>
 
 <main class="d-flex flex-nowrap">
-    <div class="flex-column flex-shrink-0 p-3 col-md-2"  >
+    <div class="flex-column flex-shrink-0 p-3 col-md-2">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-            <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#ddisk"/></svg>
+            <svg class="bi pe-none me-2" width="40" height="32">
+                <use xlink:href="#ddisk"/>
+            </svg>
             <span class="fs-4">DDisk</span>
         </a>
         <hr>
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" id="" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#new"/></svg>
+            <button class="btn btn-secondary dropdown-toggle" id="" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                <svg class="bi pe-none me-2" width="16" height="16">
+                    <use xlink:href="#new"/>
+                </svg>
                 New
             </button>
             <ul class="dropdown-menu dropdown-menu" id="pageMenu">
                 <li>
-                    <a type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#newFolderModal">New folder</a>
+                    <a type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#newFolderModal">New
+                        folder</a>
                 <li>
                     <hr class="dropdown-divider">
                 </li>
-                <li><a class="dropdown-item" type="button" id="fileUpload">File upload  </a></li>
+                <li><a class="dropdown-item" type="button" id="fileUpload">File upload </a></li>
                 <li><a class="dropdown-item" type="button" id="folderUpload">Folder upload</a></li>
             </ul>
         </div>
@@ -146,43 +247,61 @@
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
                 <a href="/" class="nav-link text-white text-decoration-none">
-                    <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#my_ddisk"/></svg>
+                    <svg class="bi pe-none me-2" width="16" height="16">
+                        <use xlink:href="#my_ddisk"/>
+                    </svg>
                     MyDDisk
                 </a>
             </li>
             <li>
+                <a href="/shared" class="nav-link text-white text-decoration-none">
+                    <svg class="bi pe-none me-2" width="16" height="16">
+                        <use xlink:href="#shareWithMe"/>
+                    </svg>
+                    Shared with me
+                </a>
+            </li>
+            <li>
                 <a href="/bin" class="nav-link text-white text-decoration-none">
-                    <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#bin"/></svg>
+                    <svg class="bi pe-none me-2" width="16" height="16">
+                        <use xlink:href="#bin"/>
+                    </svg>
                     Bin
                 </a>
             </li>
         </ul>
+
         <hr>
         <div class="dropdown">
-            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+               data-bs-toggle="dropdown" aria-expanded="false">
                 <strong th:text="${email}"></strong>
             </a>
-            <ul class="dropdown-menu dropdown-menu text-small shadow">
+            <ul th:if="${email!='anonymousUser'}" class="dropdown-menu dropdown-menu text-small shadow">
                 <li><a class="dropdown-item" href="/logout">Sign out</a></li>
             </ul>
         </div>
     </div>
 
     <svg class="d-none" xmlns="http://www.w3.org/2000/svg">
-        <symbol id="iFolder"  fill="currentColor" viewBox="0 0 16 16">
+        <symbol id="iFolder" fill="currentColor" viewBox="0 0 16 16">
             <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"/>
         </symbol>
-        <symbol id="iFile"  fill="currentColor" viewBox="0 0 16 16">
-            <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
-            <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+        <symbol id="iFile" fill="green" viewBox="0 0 16 16">
+            <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+        </symbol>
+        <symbol id="iShare" fill="currentColor" viewBox="0 -5 16 25">
+            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8Zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022ZM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816ZM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/>
         </symbol>
     </svg>
-    <div class="d-flex flex-column flex-shrink-0 p-3 col-md-10 vh-100" style="-webkit-user-drag: none;" draggable="true" id="dragItem"  >
-        <input class="form-control text-bg-dark w-100 rounded-0 border-0" type="text" placeholder="Search in Ddisk" aria-label="Search">
+    <div class="d-flex flex-column flex-shrink-0 p-3 col-md-10 vh-100" style="-webkit-user-drag: none;"
+         draggable="true" id="dragItem">
+        <!--        <input class="form-control text-bg-dark w-100 rounded-0 border-0" id="searchDdisk" type="text" placeholder="Search in Ddisk"-->
+        <!--               aria-label="Search">-->
         <table class="table table-dark table-hover">
             <thead>
             <tr>
-                <td onclick="toggleAllCheckboxes(this)">
+                <td onClick="toggleAllCheckboxes(this)">
                     <input class="form-check-input mt-0" type="checkbox"
                            th:id="allObj"/>
                 </td>
@@ -196,36 +315,45 @@
             <tbody>
             <tr th:each="internalFolder: ${folder.getFolders()}"
                 th:ondblclick="moveToFolder([[${internalFolder.address}]])"
-                onclick="selectRow(this, false)"
-                oncontextmenu="selectRow(this, true)">
+                onClick="selectRow(this, false)"
+                onContextMenu="selectRow(this, true)">
 
-                <td onclick="event.stopPropagation()">
+                <td onClick="event.stopPropagation()">
                     <input class="form-check-input mt-0" type="checkbox" name="selectedObjects[]"
                            th:value="${internalFolder.address}"/>
                 </td>
                 <td class="col-md-6">
-                    <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#iFolder"/></svg>
+                    <svg class="bi pe-none me-2" width="32" height="32">
+                        <use xlink:href="#iFolder"/>
+                        <use th:if="${internalFolder.permissions.size>0 || internalFolder.openToAll != null}"
+                             xlink:href="#iShare"/>
+                    </svg>
                     <label th:text="${internalFolder.getName()}"/>
                 </td>
-                <td class="col-md-3"th:text="${internalFolder.getOwner()}"/>
+                <td class="col-md-3" th:text="${internalFolder.getOwner()}"/>
                 <td th:text="${#dates.format(internalFolder.getCreateDate(),'dd-MM-yyyy (HH:mm:ss)')}"/>
                 <td></td>
                 <td>
-                    <button class="btn btn-secondary"  type="button" onclick="showTableMenu()">
+                    <button class="btn btn-secondary" type="button" onClick="showTableMenu()">
                         ...
                     </button>
                 </td>
 
             </tr>
             <tr th:each="internalFile: ${folder.getFiles()}"
-                onclick="selectRow(this, false)"
-                oncontextmenu="selectRow(this, true)">
-                <td onclick="event.stopPropagation()">
+                onClick="selectRow(this, false)"
+                ondblclick="downloadFile()"
+                onContextMenu="selectRow(this, true)">
+                <td onClick="event.stopPropagation()">
                     <input class="form-check-input mt-0" type="checkbox" name="selectedObjects[]"
                            th:value="${internalFile.address}"/>
                 </td>
                 <td class="col-md-6">
-                    <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#iFile"/></svg>
+                    <svg class="bi pe-none me-2" width="32" height="32">
+                        <use xlink:href="#iFile"/>
+                        <use th:if="${internalFile.permissions.size>0 || internalFile.openToAll != null}"
+                             xlink:href="#iShare"/>
+                    </svg>
                     <label th:text="${internalFile.getName()}"/>
                 </td>
                 <td class="col-md-3" th:text="${internalFile.getOwner()}"/>
@@ -233,7 +361,7 @@
                 <td th:text="${internalFile.getSize()}"/>
                 <td>
 
-                    <button class="btn btn-secondary"  type="button" onclick="showTableMenu()">
+                    <button class="btn btn-secondary" type="button" onClick="showTableMenu()">
                         ...
                     </button>
 
@@ -245,332 +373,16 @@
     </div>
 
 </main>
-<!--<script src="../static/js/remove.js"></script>-->
-<script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script>
-    $('#removeButton').click(function () {
-        var addressList = {'selectedObjects[]': []};
 
-        $(":checked").each(function () {
-            if ($(this).val() != "on") {
-                addressList['selectedObjects[]'].push($(this).val());
-            }
-        });
-        $.post("/remove", addressList, function (data, status) {
-            window.location.reload();
-        });
-    });
-</script>
-<script>
-    $('#downloadButton').click(function () {
-        var addressList = {'selectedObjects[]': []};
-
-        $(":checked").each(function () {
-            if ($(this).val() != "on") {
-                addressList['selectedObjects[]'].push($(this).val());
-            }
-        });
-        // $.get("/download", addressList, function (data, status) {
-        //     var downloadLink = document.createElement('a');
-        //     downloadLink.href = window.URL.createObjectURL(data);
-        //     downloadLink.download = 'files.zip';
-        //
-        //     // Добавляем ссылку на страницу и кликаем по ней, чтобы скачать архив
-        //     document.body.appendChild(downloadLink);
-        //     downloadLink.click();
-        //     document.body.removeChild(downloadLink);
-        // });
-        $.ajax({
-            url: "/download",
-            type: "POST",
-            data: addressList,
-            xhrFields: {
-                responseType: 'blob'
-            },
-            success: function (data, status, xhr) {
-                if (xhr.status == 200) {
-                        var downloadLink = document.createElement('a');
-                        downloadLink.href = window.URL.createObjectURL(data);
-                        downloadLink.download = 'files.zip';
-
-                        // Добавляем ссылку на страницу и кликаем по ней, чтобы скачать архив
-                        document.body.appendChild(downloadLink);
-                        downloadLink.click();
-                        document.body.removeChild(downloadLink);
-                } else {
-                    // Обработка других кодов
-                }
-            },
-            error: function (xhr, status, error) {
-                // Обработка ошибок
-            }
-        });
-
-    });
-
-</script>
-<script>
-    $('#rename').click(function () {
-        const checkboxes = document.querySelectorAll('input[type=checkbox]');
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked){
-                const currentAddress =  checkboxes[i].value;
-                const currentName = checkboxes[i].closest('tr').querySelectorAll('td')[1].textContent.trim();
-                var renameAddress = document.querySelector('#renameAddress');
-                renameAddress.value = currentAddress;
-                var newName = document.querySelector('#newName');
-                newName.value = currentName;
-                break;
-            }
-        }
-    });
-</script>
-
-<script>
-    const fileUpload = document.getElementById("fileUpload");
-    fileUpload.addEventListener("click", function(event) {
-        event.preventDefault();
-        let fileInput = document.createElement("input");
-        fileInput.type = "file";
-        fileInput.multiple = true;
-        fileInput.addEventListener("change", function() {
-            uploadFiles(this.files);
-        });
-        fileInput.click();
-    });
-
-    const folderUpload = document.getElementById("folderUpload");
-    folderUpload.addEventListener("click", function(event) {
-        event.preventDefault();
-        let fileInput = document.createElement("input");
-        fileInput.type = "file";
-        fileInput.webkitdirectory = true;
-        fileInput.addEventListener("change", function() {
-            uploadFolder(this.files);
-        });
-        fileInput.click();
-    });
-    ;
-
-    async function uploadFolder(files) {
-        const xhr = new XMLHttpRequest();
-        const formData = new FormData();
-        for (var i = 0; i < files.length; i++) {
-            formData.append("files", files[i]);
-            formData.append("webkitRelativePaths", files[i].webkitRelativePath.replace(/\\/g, "/"));
-        }
-        let currentFolder = document.getElementById("currentFolder").value;
-        formData.append("currentFolder",currentFolder);
-        xhr.open("POST", "/upload");
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                console.log("Folders uploaded successfully");
-                location.reload();
-            } else {
-                console.error("Forders upload error");
-            }
-        };
-        xhr.send(formData);
-    }
-
-    function uploadFiles(files) {
-        const xhr = new XMLHttpRequest();
-        const formData = new FormData();
-        let currentFolder = document.getElementById("currentFolder").value;
-        for (var i = 0; i < files.length; i++) {
-            formData.append("files", files[i]);
-        }
-        formData.append("currentFolder",currentFolder);
-        xhr.open("POST", "/upload");
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                console.log("Files uploaded successfully");
-                location.reload();
-            } else {
-                console.error("Files upload error");
-            }
-        };
-        xhr.send(formData);
-    }
-
-    function moveToFolder(address) {
-        location.href = '/folders/'+address;
-    }
-
-    const checkboxElements = document.querySelectorAll('table input[type="checkbox"]');
-
-
-    function selectRow(row, contextmenuFlag) {
-        // console.log(row.querySelectorAll('td')[1].textContent.trim());
-
-        const renameLi = document.getElementById("rename");
-        renameLi.style.display = "block";
-        let checkboxes = document.querySelectorAll('input[type=checkbox]');
-        let checkbox = row.querySelector('input[type=checkbox]');
-        if (contextmenuFlag===false || checkbox.checked === false){
-            for (let i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].checked = false;
-            }
-        }
-        if ($("input:checked").length>1){
-            renameLi.style.display = "none";
-        }
-        checkbox.checked = true;
-    }
-    function toggleAllCheckboxes(toggle) {
-        var checkboxes = document.querySelectorAll('table input[type="checkbox"]');
-        for (var i = 0; i < checkboxes.length; i++) {
-            checkboxes[i].checked = !toggle.checked;
-        }
-        toggle.checked=!toggle.checked;
-    }
-
-</script>
-<script>
-    async function getAllFileEntries(dataTransferItemList) {
-        let fileEntries = [];
-        let queue = [];
-        for (let i = 0; i < dataTransferItemList.length; i++) {
-            queue.push(dataTransferItemList[i].webkitGetAsEntry());
-        }
-        while (queue.length > 0) {
-            let entry = queue.shift();
-            if (entry.isFile) {
-                fileEntries.push(entry);
-            } else if (entry.isDirectory) {
-                let reader = entry.createReader();
-                queue.push(...await readAllDirectoryEntries(reader));
-            }
-        }
-        return fileEntries;
-    }
-
-    async function readAllDirectoryEntries(directoryReader) {
-        let entries = [];
-        let readEntries = await readEntriesPromise(directoryReader);
-        while (readEntries.length > 0) {
-            entries.push(...readEntries);
-            readEntries = await readEntriesPromise(directoryReader);
-        }
-        return entries;
-    }
-
-    async function readEntriesPromise(directoryReader) {
-        try {
-            return await new Promise((resolve, reject) => {
-                directoryReader.readEntries(resolve, reject);
-            });
-        } catch (err) {
-            console.log(err);
-        }
-    }
-
-    var elDrop = document.getElementById('dragItem');
-
-
-    elDrop.addEventListener('dragover', function (event) {
-        event.preventDefault();
-    });
-
-    elDrop.addEventListener('drop', async function (event) {
-        event.preventDefault();
-        let items = await getAllFileEntries(event.dataTransfer.items);
-        await uploadDroppedDir(items);
-    });
-    async function uploadDroppedDir(files){
-        const xhr = new XMLHttpRequest();
-        const formData = new FormData();
-        let currentFolder = document.getElementById("currentFolder").value;
-        formData.append("currentFolder",currentFolder);
-        for (var i = 0; i < files.length; i++) {
-            const file = await getFileFromEntry(files[i]);
-            formData.append("files", file);
-            formData.append("webkitRelativePaths", files[i].fullPath.substring(1).replace(/\\/g, "/"));
-        }
-        xhr.open("POST", "/upload");
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                console.log("Files uploaded successfully");
-                location.reload();
-            } else {
-                console.error("Files upload error");
-            }
-        };
-        xhr.send(formData);
-    }
-    function getFileFromEntry(fileEntry) {
-        return new Promise((resolve, reject) => {
-            fileEntry.file(file => {
-                resolve(file);
-            }, error => {
-                reject(error);
-            });
-        });
-    }
-</script>
-
-
-<script>
-    var pageMenu = document.querySelector("#pageMenu");
-    var tableMenu = document.querySelector("#tableMenu");
-    var menuVisible = false;
-
-    function showPageMenu() {
-        tableMenu.style.display = "none";
-        pageMenu.style.display = "block";
-
-        if (event.clientX > screen.width-180){
-            pageMenu.style.left = screen.width-180 + "px";
-        }else {
-            pageMenu.style.left = event.clientX-10 + "px";
-        }
-        if (event.clientY > screen.height-260){
-            pageMenu.style.top = screen.height-350 + "px";
-        }else {
-            pageMenu.style.top = event.clientY-90+ "px";
-        }
-        menuVisible = true;
-    }
-    function showTableMenu() {
-        pageMenu.style.display = "none";
-        tableMenu.style.display = "block";
-        tableMenu.style.position = "absolute";
-        if (event.clientX > screen.width-180){
-            tableMenu.style.left = screen.width-180 + "px";
-        }else {
-            tableMenu.style.left = event.clientX + "px";
-        }
-        if (event.clientY > screen.height-260){
-            tableMenu.style.top = screen.height-350 + "px";
-        }else {
-            tableMenu.style.top = event.clientY + "px";
-        }
-        menuVisible = true;
-    }
-
-    document.addEventListener("contextmenu", function(event) {
-        event.preventDefault();
-        var target = event.target;
-        var emptySpace = document.querySelector("#dragItem");
-
-        if (target.tagName === "TD") {
-            showTableMenu();
-        } else if(target===emptySpace){
-            showPageMenu();
-        }
-    });
-
-    document.addEventListener("click", function(event) {
-
-        if (menuVisible && event.target.tagName!=="BUTTON") {
-            pageMenu.style.display = "none";
-            pageMenu.style.display = "";
-            tableMenu.style.display = "none";
-            tableMenu.style.display = "";
-            menuVisible = false;
-        }
-    });
+<script src="https://code.jquery.com/jquery-3.4.0.min.js"
+        integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossOrigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossOrigin="anonymous"></script>
+<script src="/js/index/buttons.js"></script>
+<script src="/js/index/main.js"></script>
+<script th:inline="javascript">
+    let infoInput = [[${folder}]];
 </script>
 </body>
 </html>

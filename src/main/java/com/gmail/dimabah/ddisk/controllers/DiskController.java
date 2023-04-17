@@ -1,15 +1,18 @@
 package com.gmail.dimabah.ddisk.controllers;
 
+import com.gmail.dimabah.ddisk.dto.*;
 import com.gmail.dimabah.ddisk.models.DiskFile;
 import com.gmail.dimabah.ddisk.models.DiskFolder;
+import com.gmail.dimabah.ddisk.models.DiskObject;
 import com.gmail.dimabah.ddisk.models.DiskUser;
+import com.gmail.dimabah.ddisk.models.enums.AccessRights;
 import com.gmail.dimabah.ddisk.models.enums.UserRole;
 import com.gmail.dimabah.ddisk.services.DiskFileService;
 import com.gmail.dimabah.ddisk.services.DiskFolderService;
 import com.gmail.dimabah.ddisk.services.DiskObjectService;
 import com.gmail.dimabah.ddisk.services.DiskUserService;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,19 +27,23 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Controller
 public class DiskController {
-    private DiskUserService userService;
-    private PasswordEncoder encoder;
-    private DiskFolderService folderService;
+    private final DiskUserService userService;
+    private final PasswordEncoder encoder;
+    private final DiskFolderService folderService;
 
-    private DiskFileService fileService;
-    private DiskObjectService objectService;
+    private final DiskFileService fileService;
+    private final DiskObjectService objectService;
+
+    @Value("${server.port}")
+    private String port;
+    @Value("${server.domain}")
+    private String domain;
 
     public DiskController(DiskUserService userService, PasswordEncoder encoder,
                           DiskFolderService folderService, DiskFileService fileService,
@@ -57,26 +64,115 @@ public class DiskController {
         }
 
         model.addAttribute("email", dUser.getEmail());
-        model.addAttribute("folder", dUser.getMainFolder().toFolderDTO(true));
+        DiskFolderDTO folder = dUser.getMainFolder().toFolderDTO(true);
+        folder.setPort(port);
+        folder.setDomain(domain);
+        model.addAttribute("folder", folder);
 
         return "index";
     }
 
-    @GetMapping("folders/{address}")
-    @PreAuthorize("hasPermission(#address, 'VIEWER')")
-    public String folders(@PathVariable("address") String address, Model model) {
-
+    @GetMapping("/shared")
+    public String sharedWithMe(Model model) {
         DiskUser dUser = getCurrentDiskUser();
 
         if (dUser == null) {
             return "unauthorized";
         }
 
-        DiskFolder folder = folderService.findByAddress(address);
-        if (folder != null) {
-            model.addAttribute("folder", folder.toFolderDTO(true));
-        }
         model.addAttribute("email", dUser.getEmail());
+
+        DiskFolderDTO folder = sharedObjToDiskFolderDTO(dUser.getSharedObjects());
+        folder.setPort(port);
+        folder.setDomain(domain);
+        model.addAttribute("folder", folder);
+
+        return "index";
+    }
+
+    private DiskFolderDTO sharedObjToDiskFolderDTO(List<DiskObject> objects) {
+        DiskFolderDTO result = new DiskFolderDTO();
+        List<DiskObjectDTO> folders = new ArrayList<>();
+        List<DiskFileDTO> files = new ArrayList<>();
+        for (var obj : objects) {
+            if (obj instanceof DiskFolder) {
+                if (obj.getLive()) {
+                    folders.add(obj.toDTO());
+                }
+            }
+            if (obj instanceof DiskFile) {
+                if (obj.getLive()) {
+                    files.add(((DiskFile) obj).toDTO());
+                }
+            }
+        }
+        result.setFolders(folders);
+        result.setFiles(files);
+
+        result.setAddress("shared");
+
+        return result;
+    }
+
+    @GetMapping("files/{address}")
+    @PreAuthorize("hasPermission(#address, 'VIEWER')")
+    public String files(@PathVariable("address") String address,
+                        @RequestParam(required = false) String link,
+                        Model model) {
+
+        DiskFile file = fileService.findByAddress(address);
+        DiskUser dUser = getCurrentDiskUser();
+        String email = getEmail(dUser);
+        model.addAttribute("email", email);
+
+        if (file != null) {
+            if (!email.equals("anonymousUser") && "shared".equals(link)) {
+                addUserToShared(file, dUser);
+            }
+
+            OneFileDTO oneFileDTO = file.oneFileDTO();
+            oneFileDTO.setPort(port);
+            oneFileDTO.setDomain(domain);
+            model.addAttribute("folder", oneFileDTO);
+        }
+
+        return "index";
+    }
+
+    private String getEmail(DiskUser dUser) {
+        if (dUser == null) {
+            return "anonymousUser";
+        }
+        return dUser.getEmail();
+    }
+
+    private void addUserToShared(DiskObject object, DiskUser user) {
+        object.addUserToShared(user);
+        objectService.updateObj(object);
+    }
+
+
+    @GetMapping("folders/{address}")
+    @PreAuthorize("hasPermission(#address, 'VIEWER')")
+    public String folders(@PathVariable("address") String address,
+                          @RequestParam(required = false) String link,
+                          Model model) {
+
+        DiskFolder folder = folderService.findByAddress(address);
+        DiskUser dUser = getCurrentDiskUser();
+        String email = getEmail(dUser);
+        model.addAttribute("email", email);
+
+        if (folder != null) {
+            if (!email.equals("anonymousUser") && "shared".equals(link)) {
+                addUserToShared(folder, dUser);
+            }
+
+            DiskFolderDTO folderDTO = folder.toFolderDTO(true);
+            folderDTO.setPort(port);
+            folderDTO.setDomain(domain);
+            model.addAttribute("folder", folderDTO);
+        }
 
         return "index";
     }
@@ -106,7 +202,6 @@ public class DiskController {
             model.addAttribute("email", email);
             return "register";
         }
-
         return "redirect:/";
     }
 
@@ -123,7 +218,15 @@ public class DiskController {
     @GetMapping("/unauthorized")
     public String unauthorized(Model model) {
         User user = getCurrentUser();
-        model.addAttribute("email", user.getUsername());
+
+        String email;
+
+        if (user == null) {
+            email = "anonymousUser";
+        } else {
+            email = user.getUsername();
+        }
+        model.addAttribute("email", email);
         return "unauthorized";
     }
 
@@ -132,7 +235,7 @@ public class DiskController {
                          @RequestParam(required = false) String currentFolder,
                          @RequestParam(required = false) String[] webkitRelativePaths,
                          @RequestParam(required = false) MultipartFile[] files) {
-        if (currentFolder == null) {
+        if (currentFolder == null || "file".equals(currentFolder) || "shared".equals(currentFolder)) {
             return "redirect:/";
         }
 
@@ -163,7 +266,7 @@ public class DiskController {
     }
 
     @PostMapping(value = "/rename")
-    public String upload(@RequestParam String address,
+    public String rename(@RequestParam String address,
                          @RequestParam String newName,
                          @RequestParam String currentFolder) {
         DiskUser dUser = getCurrentDiskUser();
@@ -175,10 +278,11 @@ public class DiskController {
     @PostMapping(value = "/download")
     public void download(@RequestParam(value = "selectedObjects[]", required = false) String[] addressList,
                          HttpServletResponse response) throws IOException {
+
         DiskUser dUser = getCurrentDiskUser();
 
         if (addressList != null && addressList.length > 0) {
-            List<File> files = objectService.getFileListByAddress(Arrays.asList(addressList), dUser);
+            List<FileToDownloadDTO> files = objectService.getFileListByAddress(Arrays.asList(addressList), dUser);
 
             response.setContentType("application/zip");
             response.setHeader("Content-Disposition", "attachment; filename=\"files.zip\"");
@@ -190,33 +294,34 @@ public class DiskController {
                     if (!"*".equals(filePath.get(i))) {
                         ZipEntry zipEntry = new ZipEntry(filePath.get(i));
                         zipOut.putNextEntry(zipEntry);
-                        Files.copy(files.get(i).toPath(), zipOut);
+                        Files.copy(files.get(i).getFile().toPath(), zipOut);
                         zipOut.closeEntry();
                     }
                 }
             }
         }
     }
-    private List<String> getFilePathList(List<File> files){
+
+    private List<String> getFilePathList(List<FileToDownloadDTO> files) {
         List<String> filePath = new ArrayList<>();
         String folderName = "";
         for (var file : files) {
-            if (file.getPath().startsWith("*")) {
-                folderName = file.getPath().substring(2) + "/";
+            if (file.getFile().getPath().startsWith("*")) {
+                folderName = file.getFile().getPath().substring(2) + "/";
                 filePath.add("*");
             } else {
-                String fileName = folderName + file.getName();
+                String fileName = folderName + file.getNewFileName();
                 int counter = 1;
 
                 while (filePath.contains(fileName)) {
-                    int lastIndex = file.getName().lastIndexOf('.');
+                    int lastIndex = file.getNewFileName().lastIndexOf('.');
                     if (lastIndex == -1) {
-                        fileName = folderName + file.getName() + "(" + counter++ + ")";
+                        fileName = folderName + file.getNewFileName() + " (" + counter++ + ")";
                     } else {
                         fileName = folderName
-                                + file.getName().substring(0, lastIndex)
-                                + "(" + counter++ + ")"
-                                + file.getName().substring(lastIndex);
+                                + file.getNewFileName().substring(0, lastIndex)
+                                + " (" + counter++ + ")"
+                                + file.getNewFileName().substring(lastIndex);
                     }
                 }
 
@@ -225,139 +330,129 @@ public class DiskController {
         }
         return filePath;
     }
-//    private void addFilesToZip(ZipOutputStream zipOut, File file, String parentDir) throws IOException {
-//        String entryName = parentDir + file.getName();
-//        if (file.isDirectory()) {
-//            if (!entryName.endsWith("/")) {
-//                entryName += "/";
-//            }
-//            zipOut.putNextEntry(new ZipEntry(entryName));
-//            zipOut.closeEntry();
-//            File[] children = file.listFiles();
-//            if (children != null) {
-//                for (File childFile : children) {
-//                    addFilesToZip(zipOut, childFile, entryName);
-//                }
-//            }
-//        } else {
-//            zipOut.putNextEntry(new ZipEntry(entryName));
-//            Files.copy(file.toPath(), zipOut);
-//            zipOut.closeEntry();
-//        }
-//    }
 
 
-        @PostMapping("remove")
-//    @PreAuthorize("hasPermission(#address, 'READER')")
-//    public String removeObj(@RequestParam(required = false) String currentFolder,
-//                            @RequestParam(required = false) Long[] addressList,
-//                            Model model) {
-//        User user = getCurrentUser();
-//
-//        String email = user.getUsername();
-//        DiskUser dUser = userService.findByEmail(email);
-//
-//        if (dUser == null) {
-//            return "unauthorized";
-//        }
-//
-//        DiskFolder folder = folderService.findByAddress(currentFolder);
-//        if (folder != null) {
-//            model.addAttribute("folder", folder.toFolderDTO(true));
-//        }
-//        model.addAttribute("email", email);
-//
-//        return "redirect:/folders/" + currentFolder;
-//    }
-        public ResponseEntity<Void> removeObj (@RequestParam(value = "selectedObjects[]", required = false) String[]
-        addressList){
-            if (addressList != null && addressList.length > 0) {
-                DiskUser dUser = getCurrentDiskUser();
-                objectService.remove(Arrays.asList(addressList), dUser);
-            }
+    @PostMapping("remove")
+    public ResponseEntity<Void> removeObj(@RequestParam(value = "selectedObjects[]", required = false) String[]
+                                                  addressList) {
+        if (addressList != null && addressList.length > 0) {
+            DiskUser dUser = getCurrentDiskUser();
+            objectService.remove(Arrays.asList(addressList), dUser);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<Void> deleteObj(@RequestParam(value = "selectedObjects[]", required = false) String[]
+                                                  addressList) {
+        if (addressList != null && addressList.length > 0) {
+            DiskUser dUser = getCurrentDiskUser();
+            objectService.delete(Arrays.asList(addressList), dUser);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/restore")
+    public ResponseEntity<Void> restoreObj(@RequestParam(value = "selectedObjects[]", required = false) String[]
+                                                   addressList) {
+        if (addressList != null && addressList.length > 0) {
+            DiskUser dUser = getCurrentDiskUser();
+            objectService.restore(Arrays.asList(addressList), dUser);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/share")
+    public ResponseEntity<Void> share(@RequestParam(name = "users[]", required = false) String[] users,
+                                      @RequestParam(name = "accessRights[]", required = false) String[] accessRights,
+                                      @RequestParam(name = "globalAccessRight", required = false) String globalAccessRight,
+                                      @RequestParam(name = "currentObj") String currentObj) {
+
+        DiskUser dUser = getCurrentDiskUser();
+        Map<DiskUser, AccessRights> map = null;
+        if ("".equals(globalAccessRight)) {
+            globalAccessRight = null;
+        }
+        if (users != null && users.length > 0) {
+            map = userService.convertToMap(users, accessRights);
+        }
+        boolean result = objectService.share(map, globalAccessRight, currentObj, dUser);
+        if (result) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        @PostMapping("/delete")
-        public ResponseEntity<Void> deleteObj (@RequestParam(value = "selectedObjects[]", required = false) String[]
-        addressList){
-            if (addressList != null && addressList.length > 0) {
-                DiskUser dUser = getCurrentDiskUser();
-                objectService.delete(Arrays.asList(addressList),dUser);
-            }
-            return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
+
+
+    private User getCurrentUser() {
+        Object object = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        if ("anonymousUser".equals(object)) {
+            return null;
         }
-        @PostMapping("/restore")
-        public ResponseEntity<Void> restoreObj (@RequestParam(value = "selectedObjects[]", required = false) String[]
-        addressList){
-            if (addressList != null && addressList.length > 0) {
-                DiskUser dUser = getCurrentDiskUser();
-                objectService.restore(Arrays.asList(addressList), dUser);
-            }
-            return new ResponseEntity<>(HttpStatus.OK);
+        return (User) object;
+    }
+
+    private DiskUser getCurrentDiskUser() {
+        User user = getCurrentUser();
+        if (user == null) {
+            return null;
         }
+        String email = user.getUsername();
+        return userService.findByEmail(email);
+    }
 
+    private void uploadDir(MultipartFile[] files, String[] webkitRelativePaths,
+                           DiskUser user, DiskFolder parentFolder) {
+        Map<String, DiskFolder> folderHashMap = new HashMap<>();
+        DiskFolder tempFolder;
 
-        private User getCurrentUser () {
-            return (User) SecurityContextHolder
-                    .getContext()
-                    .getAuthentication()
-                    .getPrincipal();
-        }
-        private DiskUser getCurrentDiskUser(){
-            User user = getCurrentUser();
-            String email = user.getUsername();
-            return userService.findByEmail(email);
-        }
+        for (int i = 0; i < webkitRelativePaths.length; i++) {
+            tempFolder = parentFolder;
+            if (webkitRelativePaths[i].indexOf('/') != -1) {
+                String[] addressArr = webkitRelativePaths[i]
+                        .substring(0, webkitRelativePaths[i].lastIndexOf('/')).split("/");
+                StringBuilder sb = new StringBuilder();
 
-        private void uploadDir (MultipartFile[]files, String[]webkitRelativePaths,
-                DiskUser user, DiskFolder parentFolder){
-            Map<String, DiskFolder> folderHashMap = new HashMap<>();
-            DiskFolder tempFolder;
-
-            for (int i = 0; i < webkitRelativePaths.length; i++) {
-                tempFolder = parentFolder;
-                if (webkitRelativePaths[i].indexOf('/') != -1) {
-                    String[] addressArr = webkitRelativePaths[i]
-                            .substring(0, webkitRelativePaths[i].lastIndexOf('/')).split("/");
-                    StringBuilder sb = new StringBuilder();
-
-                    for (String s : addressArr) {
-                        sb.append(s).append('/');
-                        if (!folderHashMap.containsKey(sb.toString())) {
-                            tempFolder = folderService.createFolder(user, s, tempFolder);
-                            folderHashMap.put(sb.toString(), tempFolder);
-                        } else {
-                            tempFolder = folderHashMap.get(sb.toString());
-                        }
+                for (String s : addressArr) {
+                    sb.append(s).append('/');
+                    if (!folderHashMap.containsKey(sb.toString())) {
+                        tempFolder = folderService.createFolder(user, s, tempFolder);
+                        folderHashMap.put(sb.toString(), tempFolder);
+                    } else {
+                        tempFolder = folderHashMap.get(sb.toString());
                     }
                 }
-
-                uploadFile(files[i], user, tempFolder);
             }
+
+            uploadFile(files[i], user, tempFolder);
         }
-
-        private void uploadFile (MultipartFile file, DiskUser user, DiskFolder parentFolder){
-            String fileName = file.getOriginalFilename();
-
-            if (fileName == null) {
-                return;
-            }
-
-            if (fileName.lastIndexOf('/') != -1) {
-                fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
-            }
-            DiskFile dFile = fileService.createFile(user, fileName, file.getSize(), parentFolder);
-            if (!"".equals(file.getOriginalFilename())) {
-                try {
-                    String dirPath = "D:/upload_dir/" + user.getEmail() + "/" + dFile.getAddress() + "/";
-                    File dir = new File(dirPath);
-                    dir.mkdirs();
-                    file.transferTo(new File(dirPath + fileName));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-
     }
+
+    private void uploadFile(MultipartFile file, DiskUser user, DiskFolder parentFolder) {
+        String fileName = file.getOriginalFilename();
+
+        if (fileName == null) {
+            return;
+        }
+
+        if (fileName.lastIndexOf('/') != -1) {
+            fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+        }
+        DiskFile dFile = fileService.createFile(user, fileName, file.getSize(), parentFolder);
+        if (!"".equals(file.getOriginalFilename())) {
+            try {
+                String dirPath = "D:/upload_dir/" + user.getEmail() + "/" + dFile.getAddress() + "/";
+                File dir = new File(dirPath);
+                dir.mkdirs();
+                file.transferTo(new File(dirPath + fileName));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+}

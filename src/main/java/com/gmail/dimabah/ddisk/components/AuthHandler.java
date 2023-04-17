@@ -11,9 +11,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -29,12 +26,12 @@ public class AuthHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse,
                                         Authentication authentication) throws IOException {
-        OAuth2AuthenticationToken token = (OAuth2AuthenticationToken)authentication;
+        OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
         OAuth2User user = token.getPrincipal();
 
         Map<String, Object> attributes = user.getAttributes();
 
-        diskUserService.addUser( (String) attributes.get("email"),null, UserRole.USER);
+        diskUserService.addUser((String) attributes.get("email"), null, UserRole.USER);
 
         httpServletResponse.sendRedirect("/");
     }
