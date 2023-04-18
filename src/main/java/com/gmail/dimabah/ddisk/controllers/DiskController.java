@@ -40,8 +40,8 @@ public class DiskController {
     private final DiskFileService fileService;
     private final DiskObjectService objectService;
 
-    @Value("${server.port}")
-    private String port;
+//    @Value("${server.port}")
+//    private String port;
     @Value("${server.domain}")
     private String domain;
 
@@ -65,7 +65,7 @@ public class DiskController {
 
         model.addAttribute("email", dUser.getEmail());
         DiskFolderDTO folder = dUser.getMainFolder().toFolderDTO(true);
-        folder.setPort(port);
+//        folder.setPort(port);
         folder.setDomain(domain);
         model.addAttribute("folder", folder);
 
@@ -83,7 +83,7 @@ public class DiskController {
         model.addAttribute("email", dUser.getEmail());
 
         DiskFolderDTO folder = sharedObjToDiskFolderDTO(dUser.getSharedObjects());
-        folder.setPort(port);
+//        folder.setPort(port);
         folder.setDomain(domain);
         model.addAttribute("folder", folder);
 
@@ -131,7 +131,7 @@ public class DiskController {
             }
 
             OneFileDTO oneFileDTO = file.oneFileDTO();
-            oneFileDTO.setPort(port);
+//            oneFileDTO.setPort(port);
             oneFileDTO.setDomain(domain);
             model.addAttribute("folder", oneFileDTO);
         }
@@ -169,7 +169,7 @@ public class DiskController {
             }
 
             DiskFolderDTO folderDTO = folder.toFolderDTO(true);
-            folderDTO.setPort(port);
+//            folderDTO.setPort(port);
             folderDTO.setDomain(domain);
             model.addAttribute("folder", folderDTO);
         }

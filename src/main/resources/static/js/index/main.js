@@ -247,7 +247,7 @@ function createShareTable() {
         gb.hidden = false;
     }
     document.getElementById('copyLink').value =
-        (infoInput.domain + infoInput.port + "/" + objType + "/" + obj.address + "?link=shared");
+        (infoInput.domain + "/" + objType + "/" + obj.address + "?link=shared");
 }
 
 function showTable() {

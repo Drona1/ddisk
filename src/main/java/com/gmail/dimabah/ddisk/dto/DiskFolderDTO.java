@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class DiskFolderDTO {
     private String domain;
-    private String port;
+//    private String port;
     private String address;
     private List<DiskObjectDTO> folders = new ArrayList<>();
     private List<DiskFileDTO> files = new ArrayList<>();
