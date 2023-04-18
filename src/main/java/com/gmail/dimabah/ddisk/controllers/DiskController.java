@@ -259,7 +259,7 @@ public class DiskController {
             }
         }
 
-        return "redirect:/folders/" + currentFolder;
+        return "redirect:" + domain + "/folders/" + currentFolder;
     }
 
     @PostMapping(value = "/rename")
@@ -269,7 +269,7 @@ public class DiskController {
         DiskUser dUser = getCurrentDiskUser();
 
         objectService.rename(address, newName, dUser);
-        return "redirect:/folders/" + currentFolder;
+        return "redirect:" + domain + "/folders/" + currentFolder;
     }
 
     @PostMapping(value = "/download")
