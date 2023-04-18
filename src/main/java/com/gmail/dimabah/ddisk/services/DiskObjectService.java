@@ -1,11 +1,17 @@
 package com.gmail.dimabah.ddisk.services;
 
+import com.gmail.dimabah.ddisk.dto.BlobToDownloadDTO;
 import com.gmail.dimabah.ddisk.dto.FileToDownloadDTO;
 import com.gmail.dimabah.ddisk.models.*;
 import com.gmail.dimabah.ddisk.models.enums.AccessRights;
 import com.gmail.dimabah.ddisk.repositories.DiskObjectRepository;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
 
 import java.io.File;
 import java.util.*;
@@ -266,6 +272,7 @@ public class DiskObjectService {
         return false;
     }
 
+    // Not used because there is no access to the server's local disk
     @Transactional
     public List<FileToDownloadDTO> getFileListByAddress(List<String> addressList, DiskUser user) {
         List<FileToDownloadDTO> files = new ArrayList<>();
@@ -276,7 +283,21 @@ public class DiskObjectService {
         return files;
     }
 
+    @Transactional
+    public List<BlobToDownloadDTO> getBlobListByAddress(List<String> addressList, DiskUser user) {
+        String projectId = "ddisk-diploma";
+        List<BlobToDownloadDTO> blobs = new ArrayList<>();
+        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
+        addressList.forEach((x) -> {
+            DiskObject object = objectRepository.findDiskObjectByAddress(x);
+            addInternalBlobs(object, blobs, "*", user, storage);
+        });
+
+        return blobs;
+    }
+
+    // Not used because there is no access to the server's local disk
     private void addInternalObjects(DiskObject object, List<FileToDownloadDTO> files, String path, DiskUser user) {
         if (!object.getLive()) return;
         if (!checkUserPermission(object, user, AccessRights.VIEWER)) return;
@@ -304,6 +325,35 @@ public class DiskObjectService {
 
     }
 
+    private void addInternalBlobs(DiskObject object, List<BlobToDownloadDTO> blobs, String path, DiskUser user, Storage storage) {
+        if (!object.getLive()) return;
+        if (!checkUserPermission(object, user, AccessRights.VIEWER)) return;
+
+        if (object instanceof DiskFile) {
+            String objectName = "ddisk/" + object.getPermissions().get(0).getUser().getEmail() + "/" +
+                    object.getAddress() + "/" + object.getOriginalName();
+            Blob blob = storage.get(BlobId.of("ddisk-storage", objectName));
+
+            BlobToDownloadDTO file = new BlobToDownloadDTO(blob, objectName, object.getName());
+
+            if ("*".equals(path)) {
+                blobs.add(0, file);
+            } else {
+                blobs.add(file);
+            }
+        } else {
+            path = path + "/" + object.getName();
+            blobs.add(new BlobToDownloadDTO(null, path, ""));
+            for (var file : ((DiskFolder) object).getFileList()) {
+                addInternalBlobs(file, blobs, path, user, storage);
+            }
+            for (var folder : ((DiskFolder) object).getFolderList()) {
+                addInternalBlobs(folder, blobs, path, user, storage);
+            }
+        }
+
+    }
+
     private boolean checkUserPermission(DiskObject object, DiskUser user, AccessRights rights) {
         if (object.getOpenToAll() != null && object.getOpenToAll().getValue() >= rights.getValue()) {
             return true;
@@ -318,5 +368,6 @@ public class DiskObjectService {
         }
         return false;
     }
+
 
 }

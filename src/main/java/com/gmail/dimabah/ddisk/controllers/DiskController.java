@@ -11,6 +11,7 @@ import com.gmail.dimabah.ddisk.services.DiskFileService;
 import com.gmail.dimabah.ddisk.services.DiskFolderService;
 import com.gmail.dimabah.ddisk.services.DiskObjectService;
 import com.gmail.dimabah.ddisk.services.DiskUserService;
+import com.google.cloud.storage.*;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -40,8 +43,6 @@ public class DiskController {
     private final DiskFileService fileService;
     private final DiskObjectService objectService;
 
-//    @Value("${server.port}")
-//    private String port;
     @Value("${server.domain}")
     private String domain;
 
@@ -65,7 +66,6 @@ public class DiskController {
 
         model.addAttribute("email", dUser.getEmail());
         DiskFolderDTO folder = dUser.getMainFolder().toFolderDTO(true);
-//        folder.setPort(port);
         folder.setDomain(domain);
         model.addAttribute("folder", folder);
 
@@ -83,7 +83,6 @@ public class DiskController {
         model.addAttribute("email", dUser.getEmail());
 
         DiskFolderDTO folder = sharedObjToDiskFolderDTO(dUser.getSharedObjects());
-//        folder.setPort(port);
         folder.setDomain(domain);
         model.addAttribute("folder", folder);
 
@@ -131,7 +130,6 @@ public class DiskController {
             }
 
             OneFileDTO oneFileDTO = file.oneFileDTO();
-//            oneFileDTO.setPort(port);
             oneFileDTO.setDomain(domain);
             model.addAttribute("folder", oneFileDTO);
         }
@@ -169,7 +167,6 @@ public class DiskController {
             }
 
             DiskFolderDTO folderDTO = folder.toFolderDTO(true);
-//            folderDTO.setPort(port);
             folderDTO.setDomain(domain);
             model.addAttribute("folder", folderDTO);
         }
@@ -282,26 +279,79 @@ public class DiskController {
         DiskUser dUser = getCurrentDiskUser();
 
         if (addressList != null && addressList.length > 0) {
-            List<FileToDownloadDTO> files = objectService.getFileListByAddress(Arrays.asList(addressList), dUser);
+//       Not used because there is no access to the server's local disk
+//            List<FileToDownloadDTO> files = objectService.getFileListByAddress(Arrays.asList(addressList), dUser);
 
+            List<BlobToDownloadDTO> blobs = objectService.getBlobListByAddress(Arrays.asList(addressList), dUser);
             response.setContentType("application/zip");
             response.setHeader("Content-Disposition", "attachment; filename=\"files.zip\"");
 
-            List<String> filePath = getFilePathList(files);
+            List<String> filePath = getFilePathListForRemoteDrive(blobs);
+            zipObjectsFromRemoteDrive(response, blobs, filePath);
 
-            try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
-                for (int i = 0; i < filePath.size(); i++) {
-                    if (!"*".equals(filePath.get(i))) {
-                        ZipEntry zipEntry = new ZipEntry(filePath.get(i));
-                        zipOut.putNextEntry(zipEntry);
-                        Files.copy(files.get(i).getFile().toPath(), zipOut);
-                        zipOut.closeEntry();
-                    }
+        }
+    }
+
+    private void zipObjectsFromRemoteDrive(HttpServletResponse response,
+                                           List<BlobToDownloadDTO> blobs, List<String> filePath) throws IOException {
+
+        try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
+            for (int i = 0; i < filePath.size(); i++) {
+                if (!"*".equals(filePath.get(i))) {
+                    ZipEntry zipEntry = new ZipEntry(filePath.get(i));
+                    zipOut.putNextEntry(zipEntry);
+                    blobs.get(i).getBlob().downloadTo(zipOut);
+                    zipOut.closeEntry();
                 }
             }
         }
     }
 
+    // Not used because there is no access to the server's local disk
+    private void zipObjectsFromLocalDrive(HttpServletResponse response,
+                                          List<FileToDownloadDTO> files, List<String> filePath) throws IOException {
+        try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
+            for (int i = 0; i < filePath.size(); i++) {
+                if (!"*".equals(filePath.get(i))) {
+                    ZipEntry zipEntry = new ZipEntry(filePath.get(i));
+                    zipOut.putNextEntry(zipEntry);
+                    Files.copy(files.get(i).getFile().toPath(), zipOut);
+                    zipOut.closeEntry();
+                }
+            }
+        }
+    }
+
+    private List<String> getFilePathListForRemoteDrive(List<BlobToDownloadDTO> blobs) {
+        List<String> filePath = new ArrayList<>();
+        String folderName = "";
+        for (var blob : blobs) {
+            if (blob.getFilePath().startsWith("*")) {
+                folderName = blob.getFilePath().substring(2) + "/";
+                filePath.add("*");
+            } else {
+                String fileName = folderName + blob.getNewFileName();
+                int counter = 1;
+
+                while (filePath.contains(fileName)) {
+                    int lastIndex = blob.getNewFileName().lastIndexOf('.');
+                    if (lastIndex == -1) {
+                        fileName = folderName + blob.getNewFileName() + " (" + counter++ + ")";
+                    } else {
+                        fileName = folderName
+                                + blob.getNewFileName().substring(0, lastIndex)
+                                + " (" + counter++ + ")"
+                                + blob.getNewFileName().substring(lastIndex);
+                    }
+                }
+
+                filePath.add(fileName);
+            }
+        }
+        return filePath;
+    }
+
+    // Not used because there is no access to the server's local disk
     private List<String> getFilePathList(List<FileToDownloadDTO> files) {
         List<String> filePath = new ArrayList<>();
         String folderName = "";
@@ -443,14 +493,44 @@ public class DiskController {
         }
         DiskFile dFile = fileService.createFile(user, fileName, file.getSize(), parentFolder);
         if (!"".equals(file.getOriginalFilename())) {
-            try {
-                String dirPath = "D:/upload_dir/" + user.getEmail() + "/" + dFile.getAddress() + "/";
-                File dir = new File(dirPath);
-                dir.mkdirs();
-                file.transferTo(new File(dirPath + fileName));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String filePath = "ddisk/" + user.getEmail() + "/" + dFile.getAddress() + "/" + fileName;
+            uploadFileToRemoteDrive(filePath, file);
+        }
+    }
+
+    private void uploadFileToRemoteDrive(String objectName, MultipartFile file) {
+        String projectId = "ddisk-diploma";
+        String bucket = "ddisk-storage";
+
+        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+        BlobId blobId = BlobId.of(bucket, objectName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+
+        Storage.BlobWriteOption precondition;
+        if (storage.get(bucket, objectName) == null) {
+            precondition = Storage.BlobWriteOption.doesNotExist();
+        } else {
+            precondition =
+                    Storage.BlobWriteOption.generationMatch(
+                            storage.get(bucket, objectName).getGeneration());
+        }
+        try {
+            InputStream targetStream = new ByteArrayInputStream(file.getBytes());
+            storage.createFrom(blobInfo, targetStream, precondition);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Not used because there is no access to the server's local disk
+    private void saveFileToLocalDrive(DiskUser user, DiskFile dFile, MultipartFile file, String fileName) {
+        try {
+            String dirPath = "D:/upload_dir/" + user.getEmail() + "/" + dFile.getAddress() + "/";
+            File dir = new File(dirPath);
+            dir.mkdirs();
+            file.transferTo(new File(dirPath + fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
