@@ -30,6 +30,14 @@
     </symbol>
 </svg>
 
+<div th:if="${folder==null}" class=".container-md position-absolute top-50 start-50 translate-middle">
+    <form role="form" class="form-horizontal" action="/" method="get">
+        <div class="alert alert-warning alert-dismissible fade show p-4" role="alert">
+            <h1>Object has been deleted</h1>
+        </div>
+    </form>
+</div>
+
 <div class="modal fade" id="newFolderModal" tabIndex="-1" aria-labelledby="newFolderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -41,7 +49,8 @@
                 <div class="modal-body">
                     <input class="form-control text-bg-dark" type="text" name="newFolder" value="Untitled folder"
                            required minLength="1">
-                    <input type="hidden" id="currentFolder" name="currentFolder" th:value="${folder.getAddress()}">
+                    <input type="hidden" id="currentFolder" name="currentFolder"
+                           th:value="${folder!=null ? folder.address : ''}">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -63,7 +72,7 @@
                     <input class="form-control text-bg-dark" type="text" id="newName" name="newName"
                            value="Untitled folder" required minLength="1">
                     <input type="hidden" id="renameAddress" name="address">
-                    <input type="hidden" name="currentFolder" th:value="${folder.getAddress()}">
+                    <input type="hidden" name="currentFolder" th:value="${folder!=null ? folder.address :''}">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -225,16 +234,18 @@
         </a>
         <hr>
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" id="" type="button" data-bs-toggle="dropdown"
+            <button class="btn btn-secondary dropdown-toggle" id="" type="button" th:attr="disabled=${folder == null}"
+                    data-bs-toggle="dropdown"
                     aria-expanded="false">
                 <svg class="bi pe-none me-2" width="16" height="16">
                     <use xlink:href="#new"/>
                 </svg>
                 New
             </button>
-            <ul class="dropdown-menu dropdown-menu" id="pageMenu">
+            <ul th:if="${folder!=null}" class="dropdown-menu dropdown-menu" id="pageMenu">
                 <li>
-                    <a type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#newFolderModal">New
+                    <a type="button" class="dropdown-item"
+                       data-bs-toggle="modal" data-bs-target="#newFolderModal">New
                         folder</a>
                 <li>
                     <hr class="dropdown-divider">
@@ -312,7 +323,7 @@
                 <td></td>
             </tr>
             </thead>
-            <tbody>
+            <tbody th:if="${folder!=null}">
             <tr th:each="internalFolder: ${folder.getFolders()}"
                 th:ondblclick="moveToFolder([[${internalFolder.address}]])"
                 onClick="selectRow(this, false)"

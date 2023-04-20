@@ -68,6 +68,7 @@ public class DiskController {
         DiskFolderDTO folder = dUser.getMainFolder().toFolderDTO(true);
         folder.setDomain(domain);
         model.addAttribute("folder", folder);
+//        model.addAttribute("binned",null);
 
         return "index";
     }
@@ -94,6 +95,9 @@ public class DiskController {
         List<DiskObjectDTO> folders = new ArrayList<>();
         List<DiskFileDTO> files = new ArrayList<>();
         for (var obj : objects) {
+            if (!obj.getLive()) {
+                continue;
+            }
             if (obj instanceof DiskFolder) {
                 if (obj.getLive()) {
                     folders.add(obj.toDTO());
@@ -124,6 +128,10 @@ public class DiskController {
         String email = getEmail(dUser);
         model.addAttribute("email", email);
 
+        if (!file.getLive()) {
+            model.addAttribute("folder", null);
+            return "index";
+        }
         if (file != null) {
             if (!email.equals("anonymousUser") && "shared".equals(link)) {
                 addUserToShared(file, dUser);
@@ -161,6 +169,10 @@ public class DiskController {
         String email = getEmail(dUser);
         model.addAttribute("email", email);
 
+        if (!folder.getLive()) {
+            model.addAttribute("folder", null);
+            return "index";
+        }
         if (folder != null) {
             if (!email.equals("anonymousUser") && "shared".equals(link)) {
                 addUserToShared(folder, dUser);

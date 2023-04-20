@@ -36,10 +36,7 @@ public class DiskUser {
     @JoinColumn(name = "bin_id")
     private DiskBin bin;
 
-    @ManyToMany
-    @JoinTable(name = "shared_object",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "object_id"))
+    @ManyToMany(mappedBy = "sharedToUsers", cascade = CascadeType.ALL)
     private List<DiskObject> sharedObjects = new ArrayList<>();
 
     public DiskUser(String email, String pass, UserRole role) {

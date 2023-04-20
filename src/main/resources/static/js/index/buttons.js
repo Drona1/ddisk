@@ -63,7 +63,6 @@ function assignButtons() {
         let currentObj = $("input:checked").get()[0].value;
 
         if (gar != "Restricted") {
-            console.log("!!!  " + gar);
             globalAccessRight = document.getElementById('globalButton').innerHTML.trim();
         }
         table.querySelectorAll('tr').forEach(element => {

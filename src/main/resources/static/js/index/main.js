@@ -89,29 +89,37 @@ function downloadFile() {
 }
 
 const fileUpload = document.getElementById("fileUpload");
-fileUpload.addEventListener("click", function (event) {
-    event.preventDefault();
-    let fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.multiple = true;
-    fileInput.addEventListener("change", function () {
-        uploadFiles(this.files);
-    });
-    fileInput.click();
+const folderUpload = document.getElementById("folderUpload");
+$(document).ready(function () {
+    if (infoInput != null) {
+        uploadFunctions();
+    }
 });
 
-const folderUpload = document.getElementById("folderUpload");
-folderUpload.addEventListener("click", function (event) {
-    event.preventDefault();
-    let fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.webkitdirectory = true;
-    fileInput.addEventListener("change", function () {
-        uploadFolder(this.files);
+function uploadFunctions() {
+    fileUpload.addEventListener("click", function (event) {
+        event.preventDefault();
+        let fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.multiple = true;
+        fileInput.addEventListener("change", function () {
+            uploadFiles(this.files);
+        });
+        fileInput.click();
     });
-    fileInput.click();
-});
-;
+
+    folderUpload.addEventListener("click", function (event) {
+        event.preventDefault();
+        let fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.webkitdirectory = true;
+        fileInput.addEventListener("change", function () {
+            uploadFolder(this.files);
+        });
+        fileInput.click();
+    });
+}
+
 
 async function uploadFolder(files) {
     const xhr = new XMLHttpRequest();
@@ -295,18 +303,22 @@ document.addEventListener("contextmenu", function (event) {
     const target = event.target;
     const emptySpace = document.querySelector("#dragItem");
 
-    if (target.tagName === "TD") {
+    if (target.tagName === "TD" || target.tagName === "LABEL") {
         showTableMenu();
     } else if (target === emptySpace) {
-        showPageMenu();
+        if (pageMenu != null) {
+            showPageMenu();
+        }
     }
 });
 
 document.addEventListener("click", function (event) {
 
     if (menuVisible && event.target.tagName != "BUTTON") {
-        pageMenu.style.display = "none";
-        pageMenu.style.display = "";
+        if (pageMenu != null) {
+            pageMenu.style.display = "none";
+            pageMenu.style.display = "";
+        }
         tableMenu.style.display = "none";
         tableMenu.style.display = "";
         menuVisible = false;

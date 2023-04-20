@@ -7,7 +7,6 @@ document.addEventListener("contextmenu", function (event) {
     }
 });
 document.addEventListener("click", function (event) {
-    console.log(event.target.tagName)
     if (menuVisible && event.target.tagName !== "BUTTON") {
         tableMenu.style.display = "none";
         tableMenu.style.display = "";

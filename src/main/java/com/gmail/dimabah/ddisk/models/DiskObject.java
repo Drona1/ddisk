@@ -40,7 +40,10 @@ public class DiskObject {
     @OneToMany(mappedBy = "diskObject", cascade = CascadeType.ALL)
     private List<UserObjectPermission> permissions = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "sharedObjects")
+    @ManyToMany
+    @JoinTable(name = "shared_object",
+            joinColumns = @JoinColumn(name = "object_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<DiskUser> sharedToUsers;
 
     public DiskObject(String objName) {

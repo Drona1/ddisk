@@ -86,7 +86,7 @@ public class DiskObjectService {
     public void delete(List<String> addressList, DiskUser user) {
         addressList.forEach((x) -> {
             DiskObject object = objectRepository.findDiskObjectByAddress(x);
-            if (checkUserPermission(object, user, AccessRights.MASTER)) {
+            if (checkUserPermission(object, user, AccessRights.EDITOR)) {
                 objectRepository.delete(object);
             }
         });
