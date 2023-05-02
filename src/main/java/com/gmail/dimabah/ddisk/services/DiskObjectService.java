@@ -88,27 +88,8 @@ public class DiskObjectService {
             DiskObject object = objectRepository.findDiskObjectByAddress(x);
             if (checkUserPermission(object, user, AccessRights.EDITOR)) {
                 objectRepository.delete(object);
-                deleteObjectFromRemoteDrive("ddisk/" + user.getEmail() +
-                        "/" + object.getAddress() + "/" + object.getOriginalName());
             }
         });
-    }
-
-    private static void deleteObjectFromRemoteDrive(String objectName) {
-        String projectId = "ddisk-diploma";
-        String bucket = "ddisk-storage";
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        Blob blob = storage.get(bucket, objectName);
-        if (blob == null) {
-            System.out.println("The object " + objectName + " wasn't found in " + bucket);
-            return;
-        }
-
-        Storage.BlobSourceOption precondition =
-                Storage.BlobSourceOption.generationMatch(blob.getGeneration());
-
-        storage.delete(bucket, objectName, precondition);
-        System.out.println("Object " + objectName + " was deleted from " + bucket);
     }
 
     @Transactional

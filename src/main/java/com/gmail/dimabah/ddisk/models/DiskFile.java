@@ -1,6 +1,9 @@
 package com.gmail.dimabah.ddisk.models;
 
 import com.gmail.dimabah.ddisk.dto.*;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -77,5 +80,28 @@ public class DiskFile extends DiskObject {
                 "size=" + size +
                 ", parentFolder=" + (parentFolder == null ? null : parentFolder.getId().toString()) +
                 '}';
+    }
+
+    @PreRemove
+    private void preRemove() {
+        deleteObjectFromRemoteDrive("ddisk/" + getPermissions().get(0).getUser().getEmail() +
+                "/" + getAddress() + "/" + getOriginalName());
+    }
+
+    private static void deleteObjectFromRemoteDrive(String objectName) {
+        String projectId = "ddisk-diploma";
+        String bucket = "ddisk-storage";
+        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+        Blob blob = storage.get(bucket, objectName);
+        if (blob == null) {
+            System.out.println("The object " + objectName + " wasn't found in " + bucket);
+            return;
+        }
+
+        Storage.BlobSourceOption precondition =
+                Storage.BlobSourceOption.generationMatch(blob.getGeneration());
+
+        storage.delete(bucket, objectName, precondition);
+        System.out.println("Object " + objectName + " was deleted from " + bucket);
     }
 }
