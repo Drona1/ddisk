@@ -338,7 +338,7 @@ function selectRow(row, contextmenuFlag) {
     }
 }
 
-function changeTableMenuContent() {
+function changeTableMenuContent(isFile) {
     const renameLi = document.getElementById("rename");
     const shareLi = document.getElementById("share");
     const openLi = document.getElementById("open");
@@ -351,7 +351,7 @@ function changeTableMenuContent() {
         shareLi.style.display = "none";
         openLi.style.display = "none";
 
-    } else if ($("input:checked").get()[0].closest('tr').id !== "foldersTr") {
+    } else if (isFile === true || ($("input:checked").get()[0].closest('tr').id !== "foldersTr") && isFile !== false) {
         openLi.style.display = "none";
     }
 }
@@ -382,8 +382,7 @@ document.addEventListener("contextmenu", function (event) {
 });
 
 document.addEventListener("click", function (event) {
-
-    if (menuVisible && event.target.tagName != "BUTTON") {
+    if (menuVisible && (event.target.tagName !== "BUTTON")) {
         if (pageMenu != null) {
             pageMenu.style.display = "none";
             pageMenu.style.display = "";
@@ -411,7 +410,8 @@ function showPageMenu() {
     menuVisible = true;
 }
 
-function showTableMenu() {
+function showTableMenu(isFile) {
+    changeTableMenuContent(isFile);
     pageMenu.style.display = "none";
     tableMenu.style.display = "block";
     tableMenu.style.position = "absolute";

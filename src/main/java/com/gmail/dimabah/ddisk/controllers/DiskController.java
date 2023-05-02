@@ -124,6 +124,9 @@ public class DiskController {
                         Model model) {
 
         DiskFile file = fileService.findByAddress(address);
+        if (file == null) {
+            return "redirect:/unauthorized";
+        }
         DiskUser dUser = getCurrentDiskUser();
         String email = getEmail(dUser);
         model.addAttribute("email", email);
@@ -165,6 +168,9 @@ public class DiskController {
                           Model model) {
 
         DiskFolder folder = folderService.findByAddress(address);
+        if (folder == null) {
+            return "redirect:/unauthorized";
+        }
         DiskUser dUser = getCurrentDiskUser();
         String email = getEmail(dUser);
         model.addAttribute("email", email);

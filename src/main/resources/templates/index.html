@@ -346,7 +346,7 @@
                 <td th:text="${#dates.format(internalFolder.getCreateDate(),'dd-MM-yyyy (HH:mm:ss)')}"/>
                 <td></td>
                 <td>
-                    <button class="btn btn-secondary" type="button" onClick="showTableMenu()">
+                    <button class="btn btn-secondary" type="button" onClick="showTableMenu(false)">
                         ...
                     </button>
                 </td>
@@ -373,7 +373,7 @@
                 <td th:text="${internalFile.getSize()}"/>
                 <td>
 
-                    <button class="btn btn-secondary" type="button" onClick="showTableMenu()">
+                    <button class="btn btn-secondary" type="button" onClick="showTableMenu(true)">
                         ...
                     </button>
 
