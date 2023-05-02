@@ -3,6 +3,16 @@ $(document).ready(function () {
 });
 
 function assignButtons() {
+    $('#openButton').click(function () {
+        const checkboxes = document.querySelectorAll('input[type=checkbox]');
+        for (let i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                const currentAddress = $("input:checked").get()[0].value;
+                location.href = '/folders/' + currentAddress;
+                break;
+            }
+        }
+    });
     $('#rename').click(function () {
         const checkboxes = document.querySelectorAll('input[type=checkbox]');
         for (let i = 0; i < checkboxes.length; i++) {

@@ -213,6 +213,7 @@
 </div>
 <div class="dropdown">
     <ul class="dropdown-menu dropdown-menu" id="tableMenu">
+        <li id="open"><a class="dropdown-item" type="button" id="openButton">Open</a></li>
         <li id="share"><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#shareModal"
                           onClick="showTable()">Share</a></li>
         <li id="rename"><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#renameModal">Rename</a>
@@ -324,7 +325,7 @@
             </tr>
             </thead>
             <tbody th:if="${folder!=null}">
-            <tr th:each="internalFolder: ${folder.getFolders()}"
+            <tr id="foldersTr" th:each="internalFolder: ${folder.getFolders()}"
                 th:ondblclick="moveToFolder([[${internalFolder.address}]])"
                 onClick="selectRow(this, false)"
                 onContextMenu="selectRow(this, true)">
@@ -382,7 +383,7 @@
             </tbody>
         </table>
     </div>
-
+    <span id="main"></span>
 </main>
 
 <script src="https://code.jquery.com/jquery-3.4.0.min.js"

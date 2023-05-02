@@ -25,12 +25,19 @@ async function uploadDroppedDir(files) {
         formData.append("webkitRelativePaths", files[i].fullPath.substring(1).replace(/\\/g, "/"));
     }
     xhr.open("POST", "/upload");
+    xhr.upload.addEventListener("progress", ({loaded, total}) => {
+        showProgressWindow(loaded, total);
+    });
     xhr.onload = function () {
         if (xhr.status === 200) {
-            console.log("Files uploaded successfully");
             location.reload();
         } else {
-            console.error("Files upload error");
+            const toast = document.getElementById('main');
+            toast.innerHTML = `<div class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 end-0" role="alert">
+                                      <strong>Files upload error</strong>
+                                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>`
+
         }
     };
     xhr.send(formData);
@@ -131,18 +138,59 @@ async function uploadFolder(files) {
     let currentFolder = document.getElementById("currentFolder").value;
     formData.append("currentFolder", currentFolder);
     xhr.open("POST", "/upload");
+    xhr.upload.addEventListener("progress", ({loaded, total}) => {
+        showProgressWindow(loaded, total);
+    });
     xhr.onload = function () {
         if (xhr.status === 200) {
-            console.log("Folders uploaded successfully");
             location.reload();
         } else {
-            console.error("Forders upload error");
+            const toast = document.getElementById('main');
+            toast.innerHTML = `<div class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 end-0" role="alert">
+                                      <strong>Files upload error</strong>
+                                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>`
+
         }
     };
     xhr.send(formData);
 }
 
+function showProgressWindow(loaded, total) {
+    const mainArea = document.getElementById("main");
+    let fileLoaded = Math.floor((loaded / total) * 100);
+    let fileTotal = Math.floor(total / 1024);
+    let fileStatus = fileLoaded !== 100 ? "Uploading to server..." : "Please wait, uploading to remote drive...";
+    let progressWindow =
+        `<div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="liveToast" class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">
+                  <div class="toast-header me-2">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <span class="me-md-auto"></span>
+                    <strong class="me-md-auto">${fileStatus}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                  </div>
+                  <div class="toast-body">
+                    <ul class="list-group">
+                        <li class="d-flex ">
+                            <div class="progress col-10" role="progressbar" aria-label="Basic example"
+                              aria-valuenow="${fileLoaded}" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar" style="width: ${fileLoaded}%"></div>
+                            </div>
+                            <strong class="col-2 text-center">${fileLoaded}%</strong>
+                        </li>
+                    </ul>
+                    </ul>
+                  </div>
+                </div>
+            </div>`
+    mainArea.innerHTML = progressWindow;
+}
+
 function uploadFiles(files) {
+    const mainArea = document.getElementById("main");
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
     let currentFolder = document.getElementById("currentFolder").value;
@@ -151,12 +199,20 @@ function uploadFiles(files) {
     }
     formData.append("currentFolder", currentFolder);
     xhr.open("POST", "/upload");
+
+    xhr.upload.addEventListener("progress", ({loaded, total}) => {
+        showProgressWindow(loaded, total);
+    });
     xhr.onload = function () {
         if (xhr.status === 200) {
-            console.log("Files uploaded successfully");
             location.reload();
         } else {
-            console.error("Files upload error");
+            const toast = document.getElementById('main');
+            toast.innerHTML = `<div class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 end-0" role="alert">
+                                      <strong>Files upload error</strong>
+                                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>`
+
         }
     };
     xhr.send(formData);
@@ -269,10 +325,6 @@ function moveToFolder(address) {
 }
 
 function selectRow(row, contextmenuFlag) {
-    const renameLi = document.getElementById("rename");
-    const shareLi = document.getElementById("share");
-    renameLi.style.display = "block";
-    shareLi.style.display = "block";
     let checkboxes = document.querySelectorAll('input[type=checkbox]');
     let checkbox = row.querySelector('input[type=checkbox]');
     if (contextmenuFlag === false || checkbox.checked === false) {
@@ -280,11 +332,28 @@ function selectRow(row, contextmenuFlag) {
             checkboxes[i].checked = false;
         }
     }
+    checkbox.checked = true;
+    if (contextmenuFlag) {
+        changeTableMenuContent();
+    }
+}
+
+function changeTableMenuContent() {
+    const renameLi = document.getElementById("rename");
+    const shareLi = document.getElementById("share");
+    const openLi = document.getElementById("open");
+    renameLi.style.display = "block";
+    shareLi.style.display = "block";
+    openLi.style.display = "block";
+
     if ($("input:checked").length > 1) {
         renameLi.style.display = "none";
         shareLi.style.display = "none";
+        openLi.style.display = "none";
+
+    } else if ($("input:checked").get()[0].closest('tr').id !== "foldersTr") {
+        openLi.style.display = "none";
     }
-    checkbox.checked = true;
 }
 
 function toggleAllCheckboxes(toggle) {
